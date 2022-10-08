@@ -7,6 +7,17 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven {
+        url("https://git.uwaterloo.ca/api/v4/projects/69446/packages/maven")
+        name "GitLab"
+        credentials(HttpHeaderCredentials) {
+            name = 'Deploy-Token'
+            value = 'KtqpZE3e2fURjpqgd7BG'
+        }
+        authentication {
+            header(HttpHeaderAuthentication)
+        }
+    }
 }
 
 kotlin {
@@ -27,10 +38,14 @@ kotlin {
     }
     sourceSets {
         nativeMain {
-
+            dependencies {
+                implementation("edu.uwaterloo.cs:todo-lib:1.0-SNAPSHOT")
+            }
         }
         nativeTest {
-
+            dependencies {
+                implementation kotlin('test')
+            }
         }
     }
 }
