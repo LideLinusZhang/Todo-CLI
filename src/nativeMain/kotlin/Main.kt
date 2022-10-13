@@ -1,19 +1,6 @@
-fun main(args: Array<String>) {
-    when (args.first()) {
-        "add" -> {
+import com.github.ajalt.clikt.core.NoOpCliktCommand
+import com.github.ajalt.clikt.core.subcommands
 
-        }
+class Cli : NoOpCliktCommand()
 
-        "list" -> {
-
-        }
-
-        "delete" -> {
-
-        }
-
-        else -> {
-            println("Unrecognized command.")
-        }
-    }
-}
+fun main(args: Array<String>) = Cli().subcommands(AddCategory(), AddItem(), DeleteCategory(), DeleteItem()).main(args)

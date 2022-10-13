@@ -36,10 +36,12 @@ kotlin {
             }
         }
     }
+
     sourceSets {
         nativeMain {
             dependencies {
                 implementation("edu.uwaterloo.cs:todo-lib:1.0-SNAPSHOT")
+                implementation("com.github.ajalt.clikt:clikt:3.5.0")
             }
         }
         nativeTest {
