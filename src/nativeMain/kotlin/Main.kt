@@ -1,19 +1,5 @@
-fun main(args: Array<String>) {
-    when (args.first()) {
-        "add" -> {
+fun main() {
 
-        }
 
-        "list" -> {
-
-        }
-
-        "delete" -> {
-
-        }
-
-        else -> {
-            println("Unrecognized command.")
-        }
-    }
+    println("awwaeaweaw\n\n\n")
 }
