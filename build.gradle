@@ -1,6 +1,18 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.squareup.sqldelight:gradle-plugin:1.5.3'
+    }
+}
+
 plugins {
     id 'org.jetbrains.kotlin.multiplatform' version '1.7.20'
 }
+
+apply plugin: 'com.squareup.sqldelight'
 
 group = 'edu.uwaterloo.cs'
 version = '1.0-SNAPSHOT'
@@ -57,5 +69,11 @@ kotlin {
                 implementation kotlin('test')
             }
         }
+    }
+}
+
+sqldelight {
+    Database { // This will be the name of the generated database class.
+        packageName = "com.example"
     }
 }
