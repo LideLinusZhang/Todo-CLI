@@ -7,12 +7,6 @@ class ListItems : CliktCommand("List all todo items under a category.") {
     val categoryId by argument().convert { it.toUInt() }
 
     override fun run() {
-        val matched = items.filter { x-> x.categoryId == categoryId }
-        val t = Terminal()
 
-        for (item in matched)
-        {
-
-        }
     }
 }

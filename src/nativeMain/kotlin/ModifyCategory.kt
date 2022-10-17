@@ -7,14 +7,14 @@ import com.github.ajalt.clikt.parameters.types.choice
 
 class ModifyCategory: CliktCommand("Modify a todo category.") {
     val category by argument("ID", "Unique ID of the todo category.").convert { categories.first { x -> x.uniqueId == it.toUInt() } }
-    val field by option().choice("name","description").required()
+    val field by option().choice("name","favoured").required()
     val value by argument()
 
     override fun run() {
         when (field)
         {
             "name" -> category.name = value
-            "description" -> category.description = value
+            "description" -> category.favored = value.toBoolean()
         }
     }
 }

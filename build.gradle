@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.squareup.sqldelight:gradle-plugin:1.5.3'
+        classpath 'com.squareup.sqldelight:gradle-plugin:1.5.4'
     }
 }
 
@@ -59,9 +59,10 @@ kotlin {
     sourceSets {
         nativeMain {
             dependencies {
-                implementation("edu.uwaterloo.cs:todo-lib:1.0.0.5-DEV")
+                implementation("edu.uwaterloo.cs:todo-lib:1.0.0.6-DEV")
                 implementation("com.github.ajalt.clikt:clikt:3.5.0")
                 implementation("com.github.ajalt.mordant:mordant:2.0.0-beta7")
+                implementation("com.squareup.sqldelight:native-driver:1.5.4")
             }
         }
         nativeTest {
@@ -74,6 +75,7 @@ kotlin {
 
 sqldelight {
     Database { // This will be the name of the generated database class.
-        packageName = "com.example"
+        packageName = "edu.uwaterloo.cs.db"
     }
+    linkSqlite = true
 }
