@@ -15,9 +15,10 @@ class TodoItem(id: EntityID<Int>) : IntEntity(id), edu.uwaterloo.cs.todo.lib.Tod
     override val name by TodoItems.name
     override val description by TodoItems.description
     override val importance: ItemImportance by TodoItems.importance.transform(
-        { it.ordinal }, { ItemImportance.values()[it] }
+        { it.ordinal },
+        { ItemImportance.values()[it] }
     )
-    override val categoryId = this.category.uniqueId
+    override val categoryId by TodoItems.categoryId
     override val deadline: LocalDate by TodoItems.deadline.transform(
         { it.toEpochDays() },
         { LocalDate.fromEpochDays(it) }

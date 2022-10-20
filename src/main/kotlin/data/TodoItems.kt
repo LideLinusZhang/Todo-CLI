@@ -10,5 +10,6 @@ object TodoItems: IntIdTable(columnName = "Id") {
     val description: Column<String> = text("Description")
     val importance: Column<Int> = integer("Importance")
     val deadline: Column<Int> = integer("Deadline")
+    val categoryId: Column<UUID> = uuid("categoryId")
     val category = reference("categoryId", TodoCategories)
 }
