@@ -8,6 +8,6 @@ class TodoCategory(id: EntityID<Int>): IntEntity(id), edu.uwaterloo.cs.todo.lib.
     companion object : IntEntityClass<TodoCategory>(TodoCategories)
 
     override val uniqueId by TodoCategories.uniqueId
-    override val name by TodoCategories.name
-    override val favoured by TodoCategories.favoured
+    override var name by TodoCategories.name
+    override var favoured by TodoCategories.favoured
 }

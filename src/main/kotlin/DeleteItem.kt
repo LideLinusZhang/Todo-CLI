@@ -1,11 +1,20 @@
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
-import com.github.ajalt.clikt.parameters.arguments.convert
+import com.github.ajalt.clikt.parameters.types.int
+import data.TodoItem
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class DeleteItem : CliktCommand("Delete a todo item.") {
-    val id by argument(help = "Unique ID of the todo item to delete.").convert { it.toUInt() }
+    val itemId by argument(help = "Unique ID of the todo item to delete.").int()
 
     override fun run() {
-        items.removeAll { it.uniqueId == id }
+        transaction(db = database) {
+            val items = TodoItem.findById(itemId)
+
+            if (items === null)
+                throw Exception() //TODO: Better error reporting
+
+            items.delete()
+        }
     }
 }

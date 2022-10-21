@@ -9,18 +9,16 @@ import org.jetbrains.exposed.dao.id.EntityID
 class TodoItem(id: EntityID<Int>) : IntEntity(id), edu.uwaterloo.cs.todo.lib.TodoItem {
     companion object : IntEntityClass<TodoItem>(TodoItems)
 
-    val category by TodoCategory backReferencedOn  TodoItems.category
-
     override val uniqueId by TodoItems.uniqueId
-    override val name by TodoItems.name
-    override val description by TodoItems.description
-    override val importance: ItemImportance by TodoItems.importance.transform(
+    override var name by TodoItems.name
+    override var description by TodoItems.description
+    override var importance: ItemImportance by TodoItems.importance.transform(
         { it.ordinal },
         { ItemImportance.values()[it] }
     )
-    override val categoryId by TodoItems.categoryId
-    override val deadline: LocalDate by TodoItems.deadline.transform(
-        { it.toEpochDays() },
-        { LocalDate.fromEpochDays(it) }
+    override var categoryId by TodoItems.categoryId
+    override var deadline: LocalDate? by TodoItems.deadline.transform(
+        { it?.toEpochDays() },
+        { if(it === null) null else LocalDate.fromEpochDays(it) }
     )
 }
