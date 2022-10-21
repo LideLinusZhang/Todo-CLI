@@ -12,14 +12,14 @@ import edu.uwaterloo.cs.todo.lib.ItemImportance
 import kotlinx.datetime.LocalDate
 
 class AddItem : CliktCommand(help = "Add a todo item to a pre-existing category.") {
-    val itemName by argument("name")
-    val itemDescription by argument("description").optional()
-    val itemImportance by option("--importance").convert { enumValueOf<ItemImportance>(it) }
+    val itemImportance by option("--importance").choice(ItemImportance.values().associateBy { it.name })
     val itemDeadline by option("--deadline").convert { LocalDate.parse(it) }
-
     val searchCategoryBy by option(help = "Type of identifiers used to determine which category to add to")
         .choice("id", "name").required()
+
     val categoryIdentifier by argument()
+    val itemName by argument("name")
+    val itemDescription by argument("description").optional()
 
     override fun run() {
         factory.transaction {

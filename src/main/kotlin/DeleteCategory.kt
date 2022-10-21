@@ -6,7 +6,7 @@ import data.TodoItem
 import data.TodoItems
 
 class DeleteCategory : CliktCommand("Delete a todo category and all items under it.") {
-    val categoryId by argument().int()
+    val categoryId by argument(help = "ID of the category to be deleted").int()
 
     override fun run() {
         factory.transaction {
