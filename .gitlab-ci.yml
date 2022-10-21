@@ -10,6 +10,9 @@
 
 image: gradle:alpine
 
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
+
 # Disable the Gradle daemon for Continuous Integration servers as correctness
 # is usually a priority over speed in CI environments. Using a fresh
 # runtime for each build is more reliable since the runtime is completely
@@ -41,8 +44,3 @@ test:
     paths:
       - build
       - .gradle
-
-sast:
-  stage: test
-include:
-- template: Security/SAST.gitlab-ci.yml
