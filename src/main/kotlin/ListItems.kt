@@ -48,10 +48,10 @@ class ListItems : CliktCommand("List all todo items under a category.") {
                 width = ColumnWidth.Fixed(14)
             }
             column(1) {
-                width = ColumnWidth.Fixed(50)
+                width = ColumnWidth.Fixed(20)
             }
             column(2) {
-                width = ColumnWidth.Fixed(50)
+                width = ColumnWidth.Fixed(20)
             }
             column(3) {
                 width = ColumnWidth.Fixed(15)
