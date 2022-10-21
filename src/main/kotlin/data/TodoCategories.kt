@@ -2,10 +2,10 @@ package data
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
-import java.util.UUID
+import java.util.*
 
-object TodoCategories: IntIdTable(columnName = "Id") {
-    val uniqueId: Column<UUID> = uuid("Id").uniqueIndex()
-    val name: Column<String> = text("Name")
+object TodoCategories: IntIdTable(name = "TodoCategories", columnName = "Id") {
+    val uniqueId: Column<UUID> = uuid("UniqueId").uniqueIndex()
+    val name: Column<String> = text("Name").uniqueIndex()
     val favoured: Column<Boolean> = bool("Favoured")
 }

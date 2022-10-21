@@ -5,7 +5,6 @@ import com.github.ajalt.mordant.table.ColumnWidth
 import com.github.ajalt.mordant.table.table
 import com.github.ajalt.mordant.terminal.Terminal
 import data.TodoCategory
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class ListCategories : CliktCommand("Display todo categories.") {
     override fun run() {
@@ -20,7 +19,7 @@ class ListCategories : CliktCommand("Display todo categories.") {
             }
             body {
                 cellBorders = Borders.LEFT_RIGHT
-                transaction(db = database) {
+                factory.transaction {
                     val categories = TodoCategory.all().notForUpdate()
 
                     if(categories.empty())

@@ -10,7 +10,6 @@ import data.TodoCategory
 import data.TodoItem
 import edu.uwaterloo.cs.todo.lib.ItemImportance
 import kotlinx.datetime.LocalDate
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class AddItem : CliktCommand(help = "Add a todo item to a pre-existing category.") {
     val itemName by argument("name")
@@ -23,8 +22,7 @@ class AddItem : CliktCommand(help = "Add a todo item to a pre-existing category.
     val categoryIdentifier by argument()
 
     override fun run() {
-        transaction {
-
+        factory.transaction {
             val targetCategory: TodoCategory? = when (searchCategoryBy) {
                 "id" -> {
                     val targetCategoryId = categoryIdentifier.toInt()

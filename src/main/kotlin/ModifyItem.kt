@@ -6,7 +6,6 @@ import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.int
 import data.TodoItem
 import kotlinx.datetime.LocalDate
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class ModifyItem : CliktCommand("Modify a todo item.") {
     val itemId by argument(help ="Unique ID of the todo item.").int()
@@ -14,7 +13,7 @@ class ModifyItem : CliktCommand("Modify a todo item.") {
     val value by argument(help = "To remove deadline, enter \"none\".")
 
     override fun run() {
-        transaction(db = database) {
+        factory.transaction {
             val item = TodoItem.findById(itemId)
 
             if(item === null)
