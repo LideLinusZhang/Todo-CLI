@@ -21,7 +21,7 @@ class ListItems : CliktCommand("List all todo items under a category.") {
 
             header {
                 style(bold = true)
-                row("Unique ID", "Name", "Description", "Importance", "Deadline")
+                row("ID", "Name", "Description", "Importance", "Deadline")
             }
             body {
                 cellBorders = Borders.LEFT_RIGHT
@@ -35,7 +35,7 @@ class ListItems : CliktCommand("List all todo items under a category.") {
 
                     items.forEach {
                         row {
-                            cell(it.uniqueId)
+                            cell(it.id)
                             cell(it.name)
                             cell(it.description)
                             cell(it.importance)

@@ -15,7 +15,7 @@ class ListCategories : CliktCommand("Display todo categories.") {
 
             header {
                 style(bold = true)
-                row("Unique ID", "Name", "Favoured?")
+                row("Item", "Name", "Favoured?")
             }
             body {
                 cellBorders = Borders.LEFT_RIGHT
@@ -40,13 +40,13 @@ class ListCategories : CliktCommand("Display todo categories.") {
                 }
             }
             column(0) {
-                width = ColumnWidth.Fixed(12)
+                width = ColumnWidth.Fixed(10)
             }
             column(1) {
                 width = ColumnWidth.Fixed(50)
             }
             column(2) {
-                width = ColumnWidth.Fixed(10)
+                width = ColumnWidth.Fixed(15)
             }
         })
     }

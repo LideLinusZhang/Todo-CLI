@@ -5,8 +5,8 @@ import com.github.ajalt.clikt.parameters.options.option
 import data.TodoCategory
 
 class AddCategory : CliktCommand("Add a todo category.") {
-    val categoryName by argument()
-    val isFavoured by option("--favoured").flag()
+    val categoryName by argument(help = "Name of the category to be added.")
+    val isFavoured by option("--favoured", help = "If entered, the added category will be set to be favoured.").flag()
 
     override fun run() {
         factory.transaction {
