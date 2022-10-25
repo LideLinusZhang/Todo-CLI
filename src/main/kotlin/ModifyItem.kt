@@ -4,20 +4,23 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.int
+import data.DataFactory
 import data.TodoItem
+import exceptions.IdNotFoundException
 import kotlinx.datetime.LocalDate
+import kotlin.reflect.typeOf
 
-class ModifyItem : CliktCommand("Modify a todo item.") {
-    val itemId by argument(help ="Unique ID of the todo item.").int()
-    val field by option().choice("name", "description", "importance", "deadline", ignoreCase = true).required()
-    val value by argument(help = "To remove deadline, enter \"none\".")
+class ModifyItem(private val dataFactory: DataFactory) : CliktCommand("Modify a todo item.") {
+    private val itemId by argument(help = "Unique ID of the todo item.").int()
+    private val field by option().choice("name", "description", "importance", "deadline", ignoreCase = true).required()
+    private val value by argument(help = "To remove deadline, enter \"none\".")
 
     override fun run() {
-        factory.transaction {
+        dataFactory.transaction {
             val item = TodoItem.findById(itemId)
 
-            if(item === null)
-                throw Exception() //TODO: Better error reporting
+            if (item === null)
+                throw IdNotFoundException(itemId, typeOf<TodoItem>())
 
             when (field) {
                 "name" -> item.name = value
