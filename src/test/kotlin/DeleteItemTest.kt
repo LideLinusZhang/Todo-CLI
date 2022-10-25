@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.*
 internal class DeleteItemTest {
 
     @Test
-    fun parse() {
+    fun nonExistItemNumber_ThrowIdNotFoundException() {
         // Arrange
         val dataFactory = DataFactory()
         val command = DeleteItem(dataFactory)
