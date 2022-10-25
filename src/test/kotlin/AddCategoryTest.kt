@@ -1,4 +1,5 @@
 import data.DataFactory
+import data.TodoCategories
 import data.TodoCategory
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -15,13 +16,13 @@ internal class AddCategoryTest {
         assertDoesNotThrow { command.parse(arrayOf("Physics", "--favoured")) }
 
         dataFactory.transaction {
-            val mathsItem = TodoCategory.findById(1)
-            val physicsItem = TodoCategory.findById(2)
+            val mathsItems = TodoCategory.find { TodoCategories.name eq "Maths"}
+            val physicsItems = TodoCategory.find { TodoCategories.name eq "Physics"}
 
-            assertEquals("Maths", mathsItem?.name)
-            assertEquals(false, mathsItem?.favoured)
-            assertEquals("Physics",physicsItem?.name)
-            assertEquals(true, physicsItem?.favoured)
+            assertEquals(false, mathsItems.empty())
+            assertEquals(false, physicsItems.empty())
+            assertEquals(false, mathsItems.first().favoured)
+            assertEquals(true, physicsItems.first().favoured)
         }
     }
 }
