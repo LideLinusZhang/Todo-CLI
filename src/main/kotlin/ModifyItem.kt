@@ -7,7 +7,10 @@ import com.github.ajalt.clikt.parameters.types.int
 import data.DataFactory
 import data.TodoItem
 import exceptions.IdNotFoundException
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlin.reflect.typeOf
 
 class ModifyItem(private val dataFactory: DataFactory) : CliktCommand("Modify a todo item.") {
@@ -32,6 +35,8 @@ class ModifyItem(private val dataFactory: DataFactory) : CliktCommand("Modify a 
                     else item.deadline = LocalDate.parse(value)
                 }
             }
+
+            item.modifiedTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         }
     }
 }

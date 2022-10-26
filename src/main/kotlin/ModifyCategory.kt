@@ -7,6 +7,9 @@ import com.github.ajalt.clikt.parameters.types.int
 import data.DataFactory
 import data.TodoCategory
 import exceptions.IdNotFoundException
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlin.reflect.typeOf
 
 class ModifyCategory(private val dataFactory: DataFactory) : CliktCommand("Modify a todo category.") {
@@ -25,6 +28,8 @@ class ModifyCategory(private val dataFactory: DataFactory) : CliktCommand("Modif
                 "name" -> category.name = value
                 "description" -> category.favoured = value.toBoolean()
             }
+
+            category.modifiedTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         }
     }
 }
