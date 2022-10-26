@@ -2,7 +2,8 @@ package data
 
 import data.TodoCategories.clientDefault
 import edu.uwaterloo.cs.todo.lib.ItemImportance
-import kotlinx.datetime.LocalDate
+import kotlinx.datetime.*
+import kotlinx.datetime.TimeZone
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -19,6 +20,12 @@ class TodoItem(id: EntityID<Int>) : IntEntity(id), edu.uwaterloo.cs.todo.lib.Tod
         { ItemImportance.values()[it] }
     )
     override var categoryId by TodoItems.categoryId
+    override var modifiedTime: LocalDateTime by TodoItems.modifiedTime
+        .clientDefault { Clock.System.now().epochSeconds }
+        .transform(
+            { it.toInstant(TimeZone.currentSystemDefault()).epochSeconds },
+            { Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.currentSystemDefault()) }
+        )
     override var deadline: LocalDate? by TodoItems.deadline.transform(
         { it?.toEpochDays() },
         { if(it === null) null else LocalDate.fromEpochDays(it) }

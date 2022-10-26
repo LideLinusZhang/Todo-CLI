@@ -10,5 +10,6 @@ object TodoItems: IntIdTable(name = "TodoItems", columnName = "Id") {
     val description: Column<String> = text("Description")
     val importance: Column<Int> = integer("Importance")
     val deadline: Column<Int?> = integer("Deadline").nullable()
-    val categoryId: Column<UUID> = uuid("categoryId").index()
+    val modifiedTime: Column<Long> = long("ModifiedTime").index()
+    val categoryId: Column<UUID> = uuid("categoryId")
 }
