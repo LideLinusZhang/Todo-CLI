@@ -1,7 +1,6 @@
 import data.DataFactory
 import data.TodoCategories
 import data.TodoCategory
-import exceptions.IdNotFoundException
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -29,18 +28,18 @@ internal class AddCategoryTest {
         }
     }
 
-    @Test
-    fun nonExistItemNumber_ThrowIdNotFoundException() {
-        // Arrange
-        val dataFactory = DataFactory()
-        val command = DeleteItem(dataFactory)
+//    @Test
+//    fun nonExistItemNumber_ThrowIdNotFoundException() {
+//        // Arrange
+//        val dataFactory = DataFactory()
+//        val command = DeleteItem(dataFactory)
+//
+//        //Act & Assert
+//        assertDoesNotThrow { command.parse(arrayOf("35")) }
+//
+//
+//
+//        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1")) }
+//    }
 
-        //Act & Assert
-        assertDoesNotThrow { command.parse(arrayOf("35")) }
-
-
-
-        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1")) }
-    }
-}
 }
