@@ -11,7 +11,8 @@ import data.DataFactory
 import data.TodoCategory
 import data.TodoItem
 import data.TodoItems
-import edu.uwaterloo.cs.todo.lib.serializeList
+import edu.uwaterloo.cs.todo.lib.TodoItemModel
+import edu.uwaterloo.cs.todo.lib.serializeItemList
 import exceptions.IdNotFoundException
 import org.jetbrains.exposed.sql.SizedIterable
 import kotlin.reflect.typeOf
@@ -22,12 +23,12 @@ class ListItems(private val dataFactory: DataFactory) : CliktCommand("List all t
     private val categoryId by argument().int()
     private val terminal = Terminal()
 
-    private fun outputJSON(items: List<edu.uwaterloo.cs.todo.lib.TodoItem>) {
-        terminal.print(serializeList(items))
+    private fun outputJSON(items: List<TodoItemModel>) {
+        terminal.print(serializeItemList(items))
     }
 
     private fun outputTable(items: SizedIterable<TodoItem>) {
-        if(items.empty()) {
+        if (items.empty()) {
             terminal.println("There is no item.")
             return
         }
@@ -41,7 +42,8 @@ class ListItems(private val dataFactory: DataFactory) : CliktCommand("List all t
             body {
                 cellBorders = Borders.LEFT_RIGHT
                 items.forEach {
-                    row { cell(it.id); cell(it.name); cell(it.description)
+                    row {
+                        cell(it.id); cell(it.name); cell(it.description)
                         cell(it.importance); cell(it.deadline ?: "N/A")
                     }
                 }
@@ -62,7 +64,7 @@ class ListItems(private val dataFactory: DataFactory) : CliktCommand("List all t
             val items = TodoItem.find { TodoItems.categoryId eq category.uniqueId }
 
             if (outputJSON)
-                outputJSON(items.toList())
+                outputJSON(items.map { it.toModel() })
             else
                 outputTable(items)
         }
