@@ -1,3 +1,4 @@
+import com.github.ajalt.clikt.core.UsageError
 import data.DataFactory
 import data.TodoCategories
 import data.TodoCategory
@@ -28,18 +29,17 @@ internal class AddCategoryTest {
         }
     }
 
-//    @Test
-//    fun nonExistItemNumber_ThrowIdNotFoundException() {
-//        // Arrange
-//        val dataFactory = DataFactory()
-//        val command = DeleteItem(dataFactory)
-//
-//        //Act & Assert
-//        assertDoesNotThrow { command.parse(arrayOf("35")) }
-//
-//
-//
-//        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1")) }
-//    }
+    @Test
+        fun DoubleCategory_ThrowCategoryAlreadyExistException() {
+        // Arrange
+        val dataFactory = DataFactory()
+        val command = AddCategory(dataFactory)
+        assertDoesNotThrow { command.parse(arrayOf("Maths")) }
+
+
+        //Act & Assert
+        assertThrowsExactly(UsageError::class.java) { command.parse(arrayOf("Maths", "--favoured")) }
+
+    }
 
 }
