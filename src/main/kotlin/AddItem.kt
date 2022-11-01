@@ -29,7 +29,6 @@ class AddItem(private val dataFactory: DataFactory) : CliktCommand(help = "Add a
                     val targetCategoryId = categoryIdentifier.toInt()
                     TodoCategory.findById(targetCategoryId)
                 }
-
                 "name" -> TodoCategory.find { TodoCategories.name eq categoryIdentifier }.firstOrNull()
                 else -> null
             }

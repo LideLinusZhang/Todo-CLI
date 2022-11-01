@@ -8,19 +8,25 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
 
 class DataFactory(private val url: String = "jdbc:sqlite:file:test?mode=memory&cache=shared") {
+    private val database: Database
+
     init {
-        connect()
+        database = connect()
+        TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
         createSchema()
     }
 
-    private fun connect() {
+    protected fun finalize() {
+        TransactionManager.closeAndUnregister(database)
+    }
+
+    private fun connect(): Database {
         val config = HikariConfig()
         config.jdbcUrl = url
         config.driverClassName = "org.sqlite.JDBC"
         config.validate()
 
-        Database.connect(HikariDataSource(config))
-        TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+        return Database.connect(HikariDataSource(config))
     }
 
     private fun createSchema() {
@@ -29,5 +35,6 @@ class DataFactory(private val url: String = "jdbc:sqlite:file:test?mode=memory&c
         }
     }
 
-    fun <T> transaction(block: () -> T): T = org.jetbrains.exposed.sql.transactions.transaction { block() }
+    fun <T> transaction(block: () -> T): T =
+        org.jetbrains.exposed.sql.transactions.transaction(db = database) { block() }
 }
