@@ -12,7 +12,7 @@ import java.util.*
 class TodoCategory(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<TodoCategory>(TodoCategories)
 
-    val uniqueId by TodoCategories.uniqueId.clientDefault { UUID.randomUUID() }
+    var uniqueId by TodoCategories.uniqueId.clientDefault { UUID.randomUUID() }
     var name by TodoCategories.name
     var favoured by TodoCategories.favoured
     var modifiedTime: LocalDateTime by TodoCategories.modifiedTime
