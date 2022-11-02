@@ -13,7 +13,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import java.util.*
 
-class SyncService(url: String, private val client: HttpClient) {
+class SyncService(url: String, private val enabled: Boolean, private val client: HttpClient) {
     private val categoryOperationURL = URLBuilder(url).appendPathSegments("category").build()
     private val itemOperationURL = URLBuilder(url).appendPathSegments("item").build()
 
@@ -26,6 +26,8 @@ class SyncService(url: String, private val client: HttpClient) {
     }
 
     suspend fun syncDatabase(dataFactory: DataFactory) {
+        if (!enabled) return
+
         val listCategoriesResponse = client.request(categoryOperationURL) { method = HttpMethod.Get }
 
         for (categoryModel: TodoCategoryModel in listCategoriesResponse.body<List<TodoCategoryModel>>()) {
@@ -77,6 +79,8 @@ class SyncService(url: String, private val client: HttpClient) {
     }
 
     suspend fun addItem(categoryId: UUID, item: TodoItemModel) {
+        if (!enabled) return
+
         client.request(itemOperationURL) {
             method = HttpMethod.Post
             parameter("categoryUniqueId", categoryId)
@@ -86,6 +90,8 @@ class SyncService(url: String, private val client: HttpClient) {
     }
 
     suspend fun addCategory(category: TodoCategoryModel) {
+        if (!enabled) return
+
         client.request(categoryOperationURL) {
             method = HttpMethod.Post
             contentType(ContentType.Application.Json)
@@ -94,6 +100,8 @@ class SyncService(url: String, private val client: HttpClient) {
     }
 
     suspend fun deleteItem(itemId: UUID) {
+        if (!enabled) return
+
         client.request(itemOperationURL) {
             method = HttpMethod.Delete
             parameter("id", itemId)
@@ -101,6 +109,8 @@ class SyncService(url: String, private val client: HttpClient) {
     }
 
     suspend fun deleteCategory(categoryId: UUID) {
+        if (!enabled) return
+
         client.request(categoryOperationURL) {
             method = HttpMethod.Delete
             parameter("id", categoryId)
@@ -108,6 +118,8 @@ class SyncService(url: String, private val client: HttpClient) {
     }
 
     suspend fun modifyItem(itemId: UUID, modification: TodoItemModificationModel) {
+        if (!enabled) return
+
         client.request(itemOperationURL) {
             method = HttpMethod.Post
             parameter("id", itemId)
@@ -116,6 +128,8 @@ class SyncService(url: String, private val client: HttpClient) {
     }
 
     suspend fun modifyCategory(categoryId: UUID, modification: TodoCategoryModificationModel) {
+        if (!enabled) return
+
         client.request(categoryOperationURL) {
             method = HttpMethod.Post
             parameter("id", categoryId)

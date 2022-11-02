@@ -4,19 +4,22 @@ import com.github.ajalt.clikt.parameters.types.int
 import data.DataFactory
 import data.TodoItem
 import exceptions.IdNotFoundException
+import kotlinx.coroutines.runBlocking
+import sync.SyncService
 import kotlin.reflect.typeOf
 
-class DeleteItem(private val dataFactory: DataFactory) : CliktCommand("Delete a todo item.") {
+class DeleteItem(private val dataFactory: DataFactory, private val syncService: SyncService) : CliktCommand("Delete a todo item.") {
     private val itemId by argument(help = "ID of the todo item to be deleted.").int()
 
     override fun run() {
         dataFactory.transaction {
-            val items = TodoItem.findById(itemId)
+            val item = TodoItem.findById(itemId)
 
-            if (items === null)
+            if (item === null)
                 throw IdNotFoundException(itemId, typeOf<TodoItem>())
 
-            items.delete()
+            runBlocking { syncService.deleteItem(item.uniqueId) }
+            item.delete()
         }
     }
 }
