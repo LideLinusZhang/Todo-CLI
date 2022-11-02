@@ -13,7 +13,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import java.util.*
 
-class SyncService(url: String, private val enabled: Boolean, private val client: HttpClient) {
+class SyncService(private val client: HttpClient, private val enabled: Boolean, url: String = "") {
     private val categoryOperationURL = URLBuilder(url).appendPathSegments("category").build()
     private val itemOperationURL = URLBuilder(url).appendPathSegments("item").build()
 

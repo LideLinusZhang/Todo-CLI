@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
         .build()
         .loadConfigOrThrow<SyncServerConfig>()
     val client = HttpClient(CIO)
-    val syncService = SyncService(config.serverURL, config.enabled, client)
+    val syncService = SyncService(client, config.enabled, config.serverURL)
 
     runBlocking { syncService.syncDatabase(factory) }
 
