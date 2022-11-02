@@ -1,15 +1,20 @@
 import data.DataFactory
 import data.TodoCategories
 import data.TodoCategory
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import sync.SyncService
 
 internal class AddCategoryTest {
     @Test
     fun addCategory_AllFieldsMatchInput() {
         // Arrange
         val dataFactory = DataFactory()
-        val command = AddCategory(dataFactory)
+        val client = HttpClient(CIO)
+        val syncService = SyncService(client, false)
+        val command = AddCategory(dataFactory, syncService)
 
         //Act & Assert
         assertDoesNotThrow { command.parse(arrayOf("Maths")) }
