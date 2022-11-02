@@ -7,19 +7,13 @@ import edu.uwaterloo.cs.todo.lib.TodoItemModel
 import edu.uwaterloo.cs.todo.lib.TodoItemModificationModel
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
 import java.util.*
 
 class SyncService(private val client: HttpClient, private val enabled: Boolean, url: String = "") {
     private val categoryOperationURL = URLBuilder(url).appendPathSegments("category").build()
     private val itemOperationURL = URLBuilder(url).appendPathSegments("item").build()
-
-    init {
-        client.config { install(ContentNegotiation) { json() } }
-    }
 
     protected fun finalize() {
         client.close()
@@ -28,7 +22,7 @@ class SyncService(private val client: HttpClient, private val enabled: Boolean, 
     suspend fun syncDatabase(dataFactory: DataFactory) {
         if (!enabled) return
 
-        val listCategoriesResponse = client.request(categoryOperationURL) { method = HttpMethod.Get }
+        val listCategoriesResponse = client.get(categoryOperationURL)
 
         for (categoryModel: TodoCategoryModel in listCategoriesResponse.body<List<TodoCategoryModel>>()) {
             dataFactory.transaction {
