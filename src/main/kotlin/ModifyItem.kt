@@ -4,6 +4,7 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.int
+import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
 import data.TodoItem
 import edu.uwaterloo.cs.todo.lib.TodoItemModificationModel
@@ -21,6 +22,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
     private val itemId by argument(help = "Unique ID of the todo item.").int()
     private val field by option().choice("name", "description", "importance", "deadline", ignoreCase = true).required()
     private val value by argument(help = "To remove deadline, enter \"none\".")
+    private val terminal = Terminal()
 
     override fun run() {
         dataFactory.transaction {
@@ -59,6 +61,8 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
                 }
 
             runBlocking { syncService.modifyItem(item.uniqueId, modificationModel) }
+
+            terminal.println("Item modified successfully.")
         }
     }
 }

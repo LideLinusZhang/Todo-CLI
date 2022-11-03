@@ -2,6 +2,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
 import data.TodoCategories
 import data.TodoCategory
@@ -17,6 +18,7 @@ class AddCategory(private val dataFactory: DataFactory, private val syncService:
         "--favoured",
         help = "If entered, the added category will be set to be favoured."
     ).flag()
+    private val terminal = Terminal()
 
     override fun run() {
         dataFactory.transaction {
@@ -29,6 +31,8 @@ class AddCategory(private val dataFactory: DataFactory, private val syncService:
             }.toModel()
 
             runBlocking { syncService.addCategory(model) }
+
+            terminal.println("Category added successfully.")
         }
     }
 }

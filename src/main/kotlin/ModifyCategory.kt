@@ -4,6 +4,7 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.int
+import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
 import data.TodoCategory
 import edu.uwaterloo.cs.todo.lib.TodoCategoryModificationModel
@@ -20,6 +21,7 @@ class ModifyCategory(private val dataFactory: DataFactory, private val syncServi
     private val categoryId by argument(help = "Unique ID of the todo category.").int()
     private val field by option().choice("name", "favoured", ignoreCase = true).required()
     private val value by argument()
+    private val terminal = Terminal()
 
     override fun run() {
         dataFactory.transaction {
@@ -46,6 +48,8 @@ class ModifyCategory(private val dataFactory: DataFactory, private val syncServi
                 }
 
             runBlocking { syncService.modifyCategory(category.uniqueId, modificationModel) }
+
+            terminal.println("Category modified successfully.")
         }
     }
 }
