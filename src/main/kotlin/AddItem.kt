@@ -5,6 +5,7 @@ import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.choice
+import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
 import data.TodoCategories
 import data.TodoCategory
@@ -25,6 +26,7 @@ class AddItem(private val dataFactory: DataFactory, private val syncService: Syn
     private val categoryIdentifier by argument(help = "Value of the identifier used to determine which category to add to")
     private val itemName by argument("name")
     private val itemDescription by argument("description").optional()
+    private val terminal = Terminal()
 
     override fun run() {
         dataFactory.transaction {
@@ -46,6 +48,8 @@ class AddItem(private val dataFactory: DataFactory, private val syncService: Syn
             }.toModel()
 
             runBlocking { syncService.addItem(targetCategory.uniqueId, model) }
+
+            terminal.println("Item added successfully.")
         }
     }
 }

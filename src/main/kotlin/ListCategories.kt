@@ -29,7 +29,7 @@ class ListCategories(private val dataFactory: DataFactory) : CliktCommand("Displ
 
         terminal.println(table {
             tableBorders = Borders.NONE
-            header { style(bold = true); row("Item", "Name", "Favoured?") }
+            header { style(bold = true); row("ID", "Name", "Favoured?") }
             body {
                 cellBorders = Borders.LEFT_RIGHT
                 categories.forEach {

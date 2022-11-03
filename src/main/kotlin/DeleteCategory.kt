@@ -1,6 +1,7 @@
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.types.int
+import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
 import data.TodoCategory
 import data.TodoItem
@@ -13,6 +14,7 @@ import kotlin.reflect.typeOf
 class DeleteCategory(private val dataFactory: DataFactory, private val syncService: SyncService) :
     CliktCommand("Delete a todo category and all items under it.") {
     private val categoryId by argument(help = "ID of the category to be deleted").int()
+    private val terminal = Terminal()
 
     override fun run() {
         dataFactory.transaction {
@@ -26,6 +28,8 @@ class DeleteCategory(private val dataFactory: DataFactory, private val syncServi
 
             runBlocking { syncService.deleteCategory(category.uniqueId) }
             category.delete()
+
+            terminal.println("Category deleted successfully.")
         }
     }
 }

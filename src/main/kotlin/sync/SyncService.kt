@@ -1,6 +1,5 @@
 package sync
 
-import data.*
 import edu.uwaterloo.cs.todo.lib.TodoCategoryModel
 import edu.uwaterloo.cs.todo.lib.TodoCategoryModificationModel
 import edu.uwaterloo.cs.todo.lib.TodoItemModel
@@ -19,64 +18,25 @@ class SyncService(private val client: HttpClient, private val enabled: Boolean, 
         client.close()
     }
 
-    suspend fun syncDatabase(dataFactory: DataFactory) {
-        if (!enabled) return
+    suspend fun syncDatabase(): Pair<List<TodoCategoryModel>, List<TodoItemModel>> {
+        if (!enabled) return Pair(listOf(), listOf())
 
-        val listCategoriesResponse = client.get(categoryOperationURL)
+        val categoriesOnServer = client.get(categoryOperationURL).body<List<TodoCategoryModel>>()
+        val itemsOnServer = mutableListOf<TodoItemModel>()
 
-        for (categoryModel: TodoCategoryModel in listCategoriesResponse.body<List<TodoCategoryModel>>()) {
-            dataFactory.transaction {
-                val category = TodoCategory.find { TodoCategories.uniqueId eq categoryModel.uniqueId }.firstOrNull()
-
-                if (category !== null && category.modifiedTime < categoryModel.modifiedTime) {
-                    category.name = categoryModel.name
-                    category.favoured = categoryModel.favoured
-                    category.modifiedTime = categoryModel.modifiedTime
-                } else if (category === null) {
-                    TodoCategory.new {
-                        name = categoryModel.name
-                        favoured = categoryModel.favoured
-                        uniqueId = categoryModel.uniqueId
-                        modifiedTime = categoryModel.modifiedTime
-                    }
-                }
-            }
-
-            val listItemsResponse = client.request(itemOperationURL) {
-                method = HttpMethod.Get
+        for (categoryModel: TodoCategoryModel in categoriesOnServer) {
+            itemsOnServer.addAll(client.get(itemOperationURL) {
                 parameter("categoryUniqueId", categoryModel.uniqueId)
-            }
-
-            for (itemModel: TodoItemModel in listItemsResponse.body<List<TodoItemModel>>()) {
-                dataFactory.transaction {
-                    val item = TodoItem.find { TodoItems.uniqueId eq itemModel.uniqueId }.firstOrNull()
-
-                    if (item !== null && item.modifiedTime < itemModel.modifiedTime) {
-                        item.name = itemModel.name
-                        item.description = itemModel.description
-                        item.importance = itemModel.importance
-                        item.deadline = itemModel.deadline
-                        item.modifiedTime = itemModel.modifiedTime
-                    } else if (item === null) {
-                        TodoItem.new {
-                            name = itemModel.name
-                            description = itemModel.description
-                            importance = itemModel.importance
-                            deadline = itemModel.deadline
-                            categoryId = itemModel.categoryId
-                            modifiedTime = itemModel.modifiedTime
-                        }
-                    }
-                }
-            }
+            }.body<List<TodoItemModel>>())
         }
+
+        return Pair(categoriesOnServer, itemsOnServer)
     }
 
     suspend fun addItem(categoryId: UUID, item: TodoItemModel) {
         if (!enabled) return
 
-        client.request(itemOperationURL) {
-            method = HttpMethod.Post
+        client.post(itemOperationURL) {
             parameter("categoryUniqueId", categoryId)
             contentType(ContentType.Application.Json)
             setBody(item)
@@ -86,8 +46,7 @@ class SyncService(private val client: HttpClient, private val enabled: Boolean, 
     suspend fun addCategory(category: TodoCategoryModel) {
         if (!enabled) return
 
-        client.request(categoryOperationURL) {
-            method = HttpMethod.Post
+        client.post(categoryOperationURL) {
             contentType(ContentType.Application.Json)
             setBody(category)
         }
@@ -96,8 +55,7 @@ class SyncService(private val client: HttpClient, private val enabled: Boolean, 
     suspend fun deleteItem(itemId: UUID) {
         if (!enabled) return
 
-        client.request(itemOperationURL) {
-            method = HttpMethod.Delete
+        client.delete(itemOperationURL) {
             parameter("id", itemId)
         }
     }
@@ -105,8 +63,7 @@ class SyncService(private val client: HttpClient, private val enabled: Boolean, 
     suspend fun deleteCategory(categoryId: UUID) {
         if (!enabled) return
 
-        client.request(categoryOperationURL) {
-            method = HttpMethod.Delete
+        client.delete(categoryOperationURL) {
             parameter("id", categoryId)
         }
     }
@@ -114,8 +71,7 @@ class SyncService(private val client: HttpClient, private val enabled: Boolean, 
     suspend fun modifyItem(itemId: UUID, modification: TodoItemModificationModel) {
         if (!enabled) return
 
-        client.request(itemOperationURL) {
-            method = HttpMethod.Post
+        client.post(itemOperationURL) {
             parameter("id", itemId)
             setBody(modification)
         }
@@ -124,8 +80,7 @@ class SyncService(private val client: HttpClient, private val enabled: Boolean, 
     suspend fun modifyCategory(categoryId: UUID, modification: TodoCategoryModificationModel) {
         if (!enabled) return
 
-        client.request(categoryOperationURL) {
-            method = HttpMethod.Post
+        client.post(categoryOperationURL) {
             parameter("id", categoryId)
             setBody(modification)
         }
