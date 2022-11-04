@@ -1,9 +1,9 @@
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.choice
-import com.github.ajalt.clikt.parameters.types.int
 import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
 import data.TodoItem
@@ -19,17 +19,18 @@ import kotlin.reflect.typeOf
 
 class ModifyItem(private val dataFactory: DataFactory, private val syncService: SyncService) :
     CliktCommand("Modify a todo item.") {
-    private val itemId by argument(help = "Unique ID of the todo item.").int()
+    private val byUUID by option("--uuid", hidden = true).flag(default = false)
+    private val itemId by argument(help = "ID of the todo item.")
     private val field by option().choice("name", "description", "importance", "deadline", ignoreCase = true).required()
     private val value by argument(help = "To remove deadline, enter \"none\".")
     private val terminal = Terminal()
 
     override fun run() {
         dataFactory.transaction {
-            val item = TodoItem.findById(itemId)
+            val item = getItemById(byUUID, itemId)
 
             if (item === null)
-                throw IdNotFoundException(itemId, typeOf<TodoItem>())
+                throw IdNotFoundException(itemId.toInt(), typeOf<TodoItem>())
 
             item.modifiedTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 

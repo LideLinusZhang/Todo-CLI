@@ -2,15 +2,11 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.types.int
 import com.github.ajalt.mordant.table.Borders
 import com.github.ajalt.mordant.table.ColumnWidth
 import com.github.ajalt.mordant.table.table
 import com.github.ajalt.mordant.terminal.Terminal
-import data.DataFactory
-import data.TodoCategory
-import data.TodoItem
-import data.TodoItems
+import data.*
 import edu.uwaterloo.cs.todo.lib.TodoItemModel
 import edu.uwaterloo.cs.todo.lib.serializeItemList
 import exceptions.IdNotFoundException
@@ -20,7 +16,8 @@ import kotlin.reflect.typeOf
 //List all todo items under a category.
 class ListItems(private val dataFactory: DataFactory) : CliktCommand("List all todo items under a category.") {
     private val outputJSON by option("--json", hidden = true).flag(default = false)
-    private val categoryId by argument().int()
+    private val byUUID by option("--uuid", hidden = true).flag(default = false)
+    private val categoryId by argument(help = "ID of the todo category.")
     private val terminal = Terminal()
 
     private fun outputJSON(items: List<TodoItemModel>) {
@@ -58,9 +55,10 @@ class ListItems(private val dataFactory: DataFactory) : CliktCommand("List all t
 
     override fun run() {
         dataFactory.transaction {
-            val category = TodoCategory.findById(categoryId)
+            val category = getCategoryById(byUUID, categoryId)
+
             if (category === null)
-                throw IdNotFoundException(categoryId, typeOf<TodoCategory>())
+                throw IdNotFoundException(categoryId.toInt(), typeOf<TodoCategory>())
             val items = TodoItem.find { TodoItems.categoryId eq category.uniqueId }
 
             if (outputJSON)
