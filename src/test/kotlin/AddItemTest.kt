@@ -1,9 +1,10 @@
 import com.github.ajalt.clikt.core.UsageError
 import data.DataFactory
-import data.TodoCategories
 import data.TodoCategory
 import data.TodoItem
-import org.junit.jupiter.api.Assertions.*
+import edu.uwaterloo.cs.todo.lib.ItemImportance
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
 
 internal class AddItemTest {
@@ -14,7 +15,7 @@ internal class AddItemTest {
         val command = AddItem(dataFactory)
 
         dataFactory.transaction {
-            val category = TodoCategory.new {
+            TodoCategory.new {
                 name = "Physics"
                 favoured = true
             }
@@ -22,14 +23,12 @@ internal class AddItemTest {
         }
 
         //Act & Assert
-        assertDoesNotThrow { command.parse(arrayOf("category.uniqueId" , "A1")) } 
-
-
-
+        assertDoesNotThrow { command.parse(arrayOf("--search-category-by", "id", "1", "A1")) }
+        dataFactory.clear()
     }
 
     @Test
-        fun DoubleItem_ThrowItemAlreadyExistException() {
+    fun doubleItem_ThrowItemAlreadyExistException() {
         // Arrange
         val dataFactory = DataFactory()
         val command = AddItem(dataFactory)
@@ -43,14 +42,16 @@ internal class AddItemTest {
             }
             TodoItem.new {
                 name = "A1"
+                importance = ItemImportance.NORMAL
                 categoryId = category.uniqueId
+                description = String()
             }
         }
 
 
         //Act & Assert
-        assertThrowsExactly(UsageError::class.java) { command.parse(arrayOf("category.uniqueId" , "A1")) }
-
+        assertThrowsExactly(UsageError::class.java) { command.parse(arrayOf("--search-category-by", "id", "1", "A1")) }
+        dataFactory.clear()
     }
 
 }

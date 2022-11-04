@@ -1,14 +1,12 @@
 import data.DataFactory
-import data.TodoCategories
 import data.TodoCategory
 import data.TodoItem
+import edu.uwaterloo.cs.todo.lib.ItemImportance
 import exceptions.IdNotFoundException
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import sync.SyncService
 
 internal class DeleteItemTest {
@@ -22,29 +20,35 @@ internal class DeleteItemTest {
         val command = DeleteItem(dataFactory, syncService)
 
         //Act & Assert
+
+
         assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1")) }
+        dataFactory.clear()
     }
 
     @Test
-    fun DeleteSuccess_CategoryAndItemAllMatch() {
+    fun deleteSuccess_CategoryAndItemAllMatch() {
         // Arrange
         val dataFactory = DataFactory()
         val command = DeleteItem(dataFactory)
 
+        dataFactory.transaction {
+            val category = TodoCategory.new {
+                name = "Physics"
+                favoured = true
+            }
+            TodoItem.new {
+                name = "A1"
+                importance = ItemImportance.NORMAL
+                categoryId = category.uniqueId
+                description = String()
+            }
+            assertDoesNotThrow { command.parse(arrayOf(("1"))) }
+            assertNull(TodoItem.findById(1))
+        }
 
-       dataFactory.transaction {
-           val category = TodoCategory.new {
-               name = "Physics"
-               favoured = true
-           }
-           TodoItem.new {
-               name = "A1"
-               categoryId = category.uniqueId
-           }
-           assertDoesNotThrow { command.parse(arrayOf(("1")))}
-           assertNull(TodoItem.findById(1))
-       }
-
-
+        dataFactory.clear()
     }
 }
+
+

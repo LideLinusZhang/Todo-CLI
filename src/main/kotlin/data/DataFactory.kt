@@ -29,6 +29,11 @@ class DataFactory(private val url: String = "jdbc:sqlite:file:test?mode=memory&c
         return Database.connect(HikariDataSource(config))
     }
 
+    fun clear() {
+        transaction { SchemaUtils.drop(TodoCategories, TodoItems, inBatch = true) }
+        TransactionManager.closeAndUnregister(database = database)
+    }
+
     private fun createSchema() {
         org.jetbrains.exposed.sql.transactions.transaction {
             SchemaUtils.createMissingTablesAndColumns(TodoCategories, TodoItems)

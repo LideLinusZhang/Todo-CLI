@@ -1,20 +1,13 @@
 import data.DataFactory
-import data.TodoCategories
 import data.TodoCategory
 import data.TodoItem
-import exceptions.IdNotFoundException
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import edu.uwaterloo.cs.todo.lib.ItemImportance
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
-
 internal class ListCategoryTest {
-
-
-
-
     @Test
-    fun ListSuccess_ShowAllCategory() {
+    fun listSuccess_ShowAllCategory() {
         // Arrange
         val dataFactory = DataFactory()
         val command = ListCategories(dataFactory)
@@ -26,16 +19,20 @@ internal class ListCategoryTest {
             }
             TodoItem.new {
                 name = "A1"
+                importance = ItemImportance.NORMAL
                 categoryId = category.uniqueId
+                description = String()
             }
             TodoItem.new {
-                name = "midterm"
+                name = "A2"
+                importance = ItemImportance.NORMAL
                 categoryId = category.uniqueId
+                description = String()
             }
-            assertDoesNotThrow { command.parse(arrayOf("false"))}
+            assertDoesNotThrow { command.parse(arrayOf())}
         }
 
-
+        dataFactory.clear()
     }
 }
 

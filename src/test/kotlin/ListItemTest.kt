@@ -1,12 +1,11 @@
 import data.DataFactory
-import data.TodoCategories
 import data.TodoCategory
 import data.TodoItem
+import edu.uwaterloo.cs.todo.lib.ItemImportance
 import exceptions.IdNotFoundException
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 
 internal class ListItemTest {
 
@@ -19,11 +18,12 @@ internal class ListItemTest {
         //Act & Assert
 
         assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1")) }
+        dataFactory.clear()
     }
 
 
     @Test
-    fun ListSuccess_ItemMatch() {
+    fun listSuccess_ItemMatch() {
         // Arrange
         val dataFactory = DataFactory()
         val command = ListItems(dataFactory)
@@ -35,15 +35,19 @@ internal class ListItemTest {
             }
             TodoItem.new {
                 name = "A1"
+                importance = ItemImportance.NORMAL
                 categoryId = category.uniqueId
+                description = String()
             }
             TodoItem.new {
                 name = "midterm"
+                importance = ItemImportance.NORMAL
                 categoryId = category.uniqueId
+                description = String()
             }
             assertDoesNotThrow { command.parse(arrayOf(("1")))}
         }
-
+        dataFactory.clear()
 
     }
 }

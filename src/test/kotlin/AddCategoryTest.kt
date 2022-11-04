@@ -24,25 +24,32 @@ internal class AddCategoryTest {
 
 
         dataFactory.transaction {
-            val mathsCategories = TodoCategory.find { TodoCategories.name eq "Maths"}
-            val physicsCategories = TodoCategory.find { TodoCategories.name eq "Physics"}
+            val mathsCategories = TodoCategory.find { TodoCategories.name eq "Maths" }
+            val physicsCategories = TodoCategory.find { TodoCategories.name eq "Physics" }
 
             assertEquals(false, mathsCategories.empty())
             assertEquals(false, physicsCategories.empty())
             assertEquals(false, mathsCategories.first().favoured)
             assertEquals(true, physicsCategories.first().favoured)
         }
+        dataFactory.clear()
     }
 
     @Test
-        fun DoubleCategory_ThrowCategoryAlreadyExistException() {
+    fun doubleCategory_ThrowCategoryAlreadyExistException() {
         // Arrange
         val dataFactory = DataFactory()
         val command = AddCategory(dataFactory)
+
+
+
         assertDoesNotThrow { command.parse(arrayOf("Maths")) }
 
 
         //Act & Assert
         assertThrowsExactly(UsageError::class.java) { command.parse(arrayOf("Maths", "--favoured")) }
+
+        //Cleanup
+        dataFactory.clear()
     }
 }

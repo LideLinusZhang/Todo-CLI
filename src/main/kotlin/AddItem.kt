@@ -6,18 +6,13 @@ import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.choice
-import data.*
 import com.github.ajalt.mordant.terminal.Terminal
-import data.DataFactory
-import data.TodoCategories
-import data.TodoCategory
-import data.TodoItem
+import data.*
 import edu.uwaterloo.cs.todo.lib.ItemImportance
 import edu.uwaterloo.cs.todo.lib.TodoItemModel
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
 import sync.SyncService
 
 class AddItem(private val dataFactory: DataFactory, private val syncService: SyncService) :
@@ -30,6 +25,7 @@ class AddItem(private val dataFactory: DataFactory, private val syncService: Syn
     private val categoryIdentifier by argument(help = "Value of the identifier used to determine which category to add to")
     private val itemName by argument("name")
     private val itemDescription by argument("description").optional()
+    private val terminal = Terminal()
 
     override fun run() {
         dataFactory.transaction {

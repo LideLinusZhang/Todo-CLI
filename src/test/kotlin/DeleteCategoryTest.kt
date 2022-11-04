@@ -1,12 +1,8 @@
 import data.DataFactory
-import data.TodoCategories
 import data.TodoCategory
-import data.TodoItem
 import exceptions.IdNotFoundException
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 
 internal class DeleteCategoryTest {
 
@@ -18,26 +14,26 @@ internal class DeleteCategoryTest {
 
         //Act & Assert
 
-        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("Maths")) }
+        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1")) }
+        dataFactory.clear()
     }
 
 
     @Test
-    fun DeleteSuccess_CategoryMatch() {
+    fun deleteSuccess_CategoryMatch() {
         // Arrange
         val dataFactory = DataFactory()
         val command = DeleteCategory(dataFactory)
 
        dataFactory.transaction {
-           val category = TodoCategory.new {
+           TodoCategory.new {
                name = "Physics"
                favoured = true
            }
-           assertDoesNotThrow { command.parse(arrayOf(("Physics")))}
+           assertDoesNotThrow { command.parse(arrayOf(("1")))}
            assertNull(TodoCategory.findById(1))
        }
-
-
+        dataFactory.clear()
     }
 }
 

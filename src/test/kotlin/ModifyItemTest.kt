@@ -1,10 +1,10 @@
-import com.github.ajalt.clikt.core.UsageError
 import data.DataFactory
-import data.TodoCategories
 import data.TodoCategory
 import data.TodoItem
+import edu.uwaterloo.cs.todo.lib.ItemImportance
 import exceptions.IdNotFoundException
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
 
 internal class ModifyItemTest {
@@ -15,18 +15,19 @@ internal class ModifyItemTest {
         val dataFactory = DataFactory()
         val command = ModifyItem(dataFactory)
         dataFactory.transaction {
-            val category = TodoCategory.new {
+            TodoCategory.new {
                 name = "Physics"
                 favoured = true
             }
         }
         //Act & Assert
 
-        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1" , "name" , "a2")) }
+        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1", "--field" , "name", "a2")) }
+        dataFactory.clear()
     }
 
     @Test
-        fun ModifyItem_Successful() {
+    fun modifyItem_Successful() {
         // Arrange
         val dataFactory = DataFactory()
         val command = ModifyItem(dataFactory)
@@ -39,14 +40,15 @@ internal class ModifyItemTest {
             }
             TodoItem.new {
                 name = "A1"
+                importance = ItemImportance.NORMAL
                 categoryId = category.uniqueId
+                description = String()
             }
             //Act & Assert
-            assertDoesNotThrow { command.parse(arrayOf("1" , "name" , "a2"))}
+            assertDoesNotThrow {  command.parse(arrayOf("1", "--field" , "name", "a2")) }
 
         }
-
-
+        dataFactory.clear()
 
 
     }
