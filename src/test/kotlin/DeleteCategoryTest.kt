@@ -8,40 +8,33 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 
-internal class DeleteItemTest {
+internal class DeleteCategoryTest {
 
     @Test
-    fun nonExistItemNumber_ThrowIdNotFoundException() {
+    fun nonExistCategory_ThrowIdNotFoundException() {
         // Arrange
         val dataFactory = DataFactory()
-        val command = DeleteItem(dataFactory)
+        val command = DeleteCategory(dataFactory)
 
         //Act & Assert
 
-
-
-
-        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1")) }
+        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("Maths")) }
     }
 
+
     @Test
-    fun DeleteSuccess_CategoryAndItemAllMatch() {
+    fun DeleteSuccess_CategoryMatch() {
         // Arrange
         val dataFactory = DataFactory()
-        val command = DeleteItem(dataFactory)
-
+        val command = DeleteCategory(dataFactory)
 
        dataFactory.transaction {
            val category = TodoCategory.new {
                name = "Physics"
                favoured = true
            }
-           TodoItem.new {
-               name = "A1"
-               categoryId = category.uniqueId
-           }
-           assertDoesNotThrow { command.parse(arrayOf(("1")))}
-           assertNull(TodoItem.findById(1))
+           assertDoesNotThrow { command.parse(arrayOf(("Physics")))}
+           assertNull(TodoCategory.findById(1))
        }
 
 
