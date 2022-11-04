@@ -39,7 +39,5 @@ internal class AddCategoryTest {
 
         //Act & Assert
         assertThrowsExactly(UsageError::class.java) { command.parse(arrayOf("Maths", "--favoured")) }
-
     }
-
 }
