@@ -4,29 +4,36 @@ import edu.uwaterloo.cs.todo.lib.ItemImportance
 import exceptions.IdNotFoundException
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
 import sync.SyncService
 
-internal class DeleteItemTest: CommandTest() {
+internal class ModifyItemTest: CommandTest() {
 
     @Test
-    fun nonExistItemNumber_ThrowIdNotFoundException() {
+    fun nonExistItem_ThrowIdNotFoundException() {
         // Arrange
         val client = HttpClient(CIO)
         val syncService = SyncService(client, false)
-        val command = DeleteItem(dataFactory, syncService)
+        val command = ModifyItem(dataFactory, syncService)
+        dataFactory.transaction {
+            TodoCategory.new {
+                name = "Physics"
+                favoured = true
+            }
+        }
 
         //Act & Assert
-        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1")) }
+        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1", "--field" , "name", "a2")) }
     }
 
     @Test
-    fun deleteSuccess_CategoryAndItemAllMatch() {
+    fun modifyItem_Successful() {
         // Arrange
         val client = HttpClient(CIO)
         val syncService = SyncService(client, false)
-        val command = DeleteItem(dataFactory, syncService)
+        val command = ModifyItem(dataFactory, syncService)
 
         dataFactory.transaction {
             val category = TodoCategory.new {
@@ -39,10 +46,9 @@ internal class DeleteItemTest: CommandTest() {
                 categoryId = category.uniqueId
                 description = String()
             }
-            assertDoesNotThrow { command.parse(arrayOf(("1"))) }
-            assertNull(TodoItem.findById(1))
+            //Act & Assert
+            assertDoesNotThrow {  command.parse(arrayOf("1", "--field" , "name", "a2")) }
+
         }
     }
 }
-
-

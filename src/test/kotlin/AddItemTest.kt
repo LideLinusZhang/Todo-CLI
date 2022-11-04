@@ -1,32 +1,39 @@
+import com.github.ajalt.clikt.core.UsageError
 import data.TodoCategory
 import data.TodoItem
 import edu.uwaterloo.cs.todo.lib.ItemImportance
-import exceptions.IdNotFoundException
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
 import sync.SyncService
 
-internal class DeleteItemTest: CommandTest() {
-
+internal class AddItemTest: CommandTest() {
     @Test
-    fun nonExistItemNumber_ThrowIdNotFoundException() {
+    fun addItem_Successful() {
         // Arrange
         val client = HttpClient(CIO)
         val syncService = SyncService(client, false)
-        val command = DeleteItem(dataFactory, syncService)
+        val command = AddItem(dataFactory, syncService)
+
+        dataFactory.transaction {
+            TodoCategory.new {
+                name = "Physics"
+                favoured = true
+            }
+        }
 
         //Act & Assert
-        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1")) }
+        assertDoesNotThrow { command.parse(arrayOf("--search-category-by", "id", "1", "A1")) }
     }
 
     @Test
-    fun deleteSuccess_CategoryAndItemAllMatch() {
+    fun doubleItem_ThrowItemAlreadyExistException() {
         // Arrange
         val client = HttpClient(CIO)
         val syncService = SyncService(client, false)
-        val command = DeleteItem(dataFactory, syncService)
+        val command = AddItem(dataFactory, syncService)
 
         dataFactory.transaction {
             val category = TodoCategory.new {
@@ -39,10 +46,9 @@ internal class DeleteItemTest: CommandTest() {
                 categoryId = category.uniqueId
                 description = String()
             }
-            assertDoesNotThrow { command.parse(arrayOf(("1"))) }
-            assertNull(TodoItem.findById(1))
         }
+
+        //Act & Assert
+        assertThrowsExactly(UsageError::class.java) { command.parse(arrayOf("--search-category-by", "id", "1", "A1")) }
     }
 }
-
-

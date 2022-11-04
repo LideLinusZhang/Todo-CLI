@@ -1,4 +1,5 @@
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.options.convert
@@ -6,14 +7,12 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.mordant.terminal.Terminal
-import data.DataFactory
-import data.TodoCategories
-import data.TodoCategory
-import data.TodoItem
+import data.*
 import edu.uwaterloo.cs.todo.lib.ItemImportance
 import edu.uwaterloo.cs.todo.lib.TodoItemModel
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
+import org.jetbrains.exposed.sql.and
 import sync.SyncService
 
 class AddItem(private val dataFactory: DataFactory, private val syncService: SyncService) :
@@ -37,7 +36,10 @@ class AddItem(private val dataFactory: DataFactory, private val syncService: Syn
             }
 
             if (targetCategory === null)
-                throw Exception() //TODO: Better error reporting
+                throw UsageError(text = "The target category doesn't exist.")
+
+            if (!TodoItem.find { TodoItems.categoryId eq targetCategory.uniqueId and (TodoItems.name eq itemName)}.empty())
+                throw UsageError(text = "The Todo Item with the same name already exists under this category.")
 
             val model: TodoItemModel = TodoItem.new {
                 name = itemName

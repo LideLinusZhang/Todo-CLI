@@ -13,7 +13,7 @@ import exceptions.IdNotFoundException
 import org.jetbrains.exposed.sql.SizedIterable
 import kotlin.reflect.typeOf
 
-//List all todo items under a category.
+//List all to-do items under a category.
 class ListItems(private val dataFactory: DataFactory) : CliktCommand("List all todo items under a category.") {
     private val outputJSON by option("--json", hidden = true).flag(default = false)
     private val byUUID by option("--uuid", hidden = true).flag(default = false)

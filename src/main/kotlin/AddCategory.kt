@@ -1,4 +1,5 @@
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -23,7 +24,7 @@ class AddCategory(private val dataFactory: DataFactory, private val syncService:
     override fun run() {
         dataFactory.transaction {
             if (!TodoCategories.select { TodoCategories.name eq categoryName }.empty())
-                throw Exception() // Name must be unique, TODO: Better error reporting
+                throw UsageError(text = "The Todo Category with the same name already exists.") // Name must be unique, TODO: Better error reporting
 
             val model: TodoCategoryModel = TodoCategory.new {
                 name = categoryName
