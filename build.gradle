@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'edu.uwaterloo.cs'
-version = '1.0-SNAPSHOT'
+version = '1.1-DEV'
 
 repositories {
     mavenCentral()
@@ -22,16 +22,22 @@ repositories {
 }
 
 dependencies {
-    implementation "edu.uwaterloo.cs:todo-lib:1.0.0.14-DEV"
+    implementation "edu.uwaterloo.cs:todo-lib:1.0.0.21-DEV"
     implementation "com.github.ajalt.clikt:clikt:3.5.0"
     implementation "com.github.ajalt.mordant:mordant:2.0.0-beta7"
     implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
-    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-    implementation('org.xerial:sqlite-jdbc:3.39.3.0')
-    implementation('org.slf4j:slf4j-nop:2.0.3')
+    implementation "org.jetbrains.exposed:exposed-core:$exposedVersion"
+    implementation "org.jetbrains.exposed:exposed-dao:$exposedVersion"
+    implementation "org.jetbrains.exposed:exposed-jdbc:$exposedVersion"
+    implementation "io.ktor:ktor-client-core:$ktor_version"
+    implementation "io.ktor:ktor-client-cio:$ktor_version"
+    implementation "io.ktor:ktor-client-content-negotiation:$ktor_version"
+    implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
+    implementation 'org.xerial:sqlite-jdbc:3.39.3.0'
+    implementation 'org.slf4j:slf4j-nop:2.0.3'
     implementation 'com.zaxxer:HikariCP:5.0.1'
+    implementation 'com.sksamuel.hoplite:hoplite-core:2.6.5'
+    implementation 'com.sksamuel.hoplite:hoplite-json:2.6.5'
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'

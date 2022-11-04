@@ -2,16 +2,13 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.types.int
 import com.github.ajalt.mordant.table.Borders
 import com.github.ajalt.mordant.table.ColumnWidth
 import com.github.ajalt.mordant.table.table
 import com.github.ajalt.mordant.terminal.Terminal
-import data.DataFactory
-import data.TodoCategory
-import data.TodoItem
-import data.TodoItems
-import edu.uwaterloo.cs.todo.lib.serializeList
+import data.*
+import edu.uwaterloo.cs.todo.lib.TodoItemModel
+import edu.uwaterloo.cs.todo.lib.serializeItemList
 import exceptions.IdNotFoundException
 import org.jetbrains.exposed.sql.SizedIterable
 import kotlin.reflect.typeOf
@@ -19,15 +16,16 @@ import kotlin.reflect.typeOf
 //List all to-do items under a category.
 class ListItems(private val dataFactory: DataFactory) : CliktCommand("List all todo items under a category.") {
     private val outputJSON by option("--json", hidden = true).flag(default = false)
-    private val categoryId by argument().int()
+    private val byUUID by option("--uuid", hidden = true).flag(default = false)
+    private val categoryId by argument(help = "ID of the todo category.")
     private val terminal = Terminal()
 
-    private fun outputJSON(items: List<edu.uwaterloo.cs.todo.lib.TodoItem>) {
-        terminal.print(serializeList(items))
+    private fun outputJSON(items: List<TodoItemModel>) {
+        terminal.print(serializeItemList(items))
     }
 
     private fun outputTable(items: SizedIterable<TodoItem>) {
-        if(items.empty()) {
+        if (items.empty()) {
             terminal.println("There is no item.")
             return
         }
@@ -41,7 +39,8 @@ class ListItems(private val dataFactory: DataFactory) : CliktCommand("List all t
             body {
                 cellBorders = Borders.LEFT_RIGHT
                 items.forEach {
-                    row { cell(it.id); cell(it.name); cell(it.description)
+                    row {
+                        cell(it.id); cell(it.name); cell(it.description)
                         cell(it.importance); cell(it.deadline ?: "N/A")
                     }
                 }
@@ -56,13 +55,14 @@ class ListItems(private val dataFactory: DataFactory) : CliktCommand("List all t
 
     override fun run() {
         dataFactory.transaction {
-            val category = TodoCategory.findById(categoryId)
+            val category = getCategoryById(byUUID, categoryId)
+
             if (category === null)
-                throw IdNotFoundException(categoryId, typeOf<TodoCategory>())
+                throw IdNotFoundException(categoryId.toInt(), typeOf<TodoCategory>())
             val items = TodoItem.find { TodoItems.categoryId eq category.uniqueId }
 
             if (outputJSON)
-                outputJSON(items.toList())
+                outputJSON(items.map { it.toModel() })
             else
                 outputTable(items)
         }

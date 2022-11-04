@@ -9,15 +9,16 @@ import com.github.ajalt.mordant.table.table
 import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
 import data.TodoCategory
-import edu.uwaterloo.cs.todo.lib.serializeList
+import edu.uwaterloo.cs.todo.lib.TodoCategoryModel
+import edu.uwaterloo.cs.todo.lib.serializeCategoryList
 import org.jetbrains.exposed.sql.SizedIterable
 
 class ListCategories(private val dataFactory: DataFactory) : CliktCommand("Display todo categories.") {
     private val outputJSON by option("--json", hidden = true).flag(default = false)
     private val terminal = Terminal()
 
-    private fun outputJSON(categories: List<edu.uwaterloo.cs.todo.lib.TodoCategory>) {
-        terminal.print(serializeList(categories))
+    private fun outputJSON(categories: List<TodoCategoryModel>) {
+        terminal.print(serializeCategoryList(categories))
     }
 
     private fun outputTable(categories: SizedIterable<TodoCategory>) {
@@ -28,7 +29,7 @@ class ListCategories(private val dataFactory: DataFactory) : CliktCommand("Displ
 
         terminal.println(table {
             tableBorders = Borders.NONE
-            header { style(bold = true); row("Item", "Name", "Favoured?") }
+            header { style(bold = true); row("ID", "Name", "Favoured?") }
             body {
                 cellBorders = Borders.LEFT_RIGHT
                 categories.forEach {
@@ -54,7 +55,7 @@ class ListCategories(private val dataFactory: DataFactory) : CliktCommand("Displ
         dataFactory.transaction {
             val categories = TodoCategory.all().notForUpdate()
             if (outputJSON)
-                outputJSON(categories.toList())
+                outputJSON(categories.map { it.toModel() })
             else
                 outputTable(categories)
         }
