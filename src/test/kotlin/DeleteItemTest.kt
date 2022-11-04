@@ -1,4 +1,3 @@
-import data.DataFactory
 import data.TodoCategory
 import data.TodoItem
 import edu.uwaterloo.cs.todo.lib.ItemImportance
@@ -9,28 +8,25 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import sync.SyncService
 
-internal class DeleteItemTest {
+internal class DeleteItemTest: CommandTest() {
 
     @Test
     fun nonExistItemNumber_ThrowIdNotFoundException() {
         // Arrange
-        val dataFactory = DataFactory()
         val client = HttpClient(CIO)
         val syncService = SyncService(client, false)
         val command = DeleteItem(dataFactory, syncService)
 
         //Act & Assert
-
-
         assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1")) }
-        dataFactory.clear()
     }
 
     @Test
     fun deleteSuccess_CategoryAndItemAllMatch() {
         // Arrange
-        val dataFactory = DataFactory()
-        val command = DeleteItem(dataFactory)
+        val client = HttpClient(CIO)
+        val syncService = SyncService(client, false)
+        val command = DeleteItem(dataFactory, syncService)
 
         dataFactory.transaction {
             val category = TodoCategory.new {
@@ -46,8 +42,6 @@ internal class DeleteItemTest {
             assertDoesNotThrow { command.parse(arrayOf(("1"))) }
             assertNull(TodoItem.findById(1))
         }
-
-        dataFactory.clear()
     }
 }
 

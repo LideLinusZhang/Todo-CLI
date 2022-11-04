@@ -1,4 +1,3 @@
-import data.DataFactory
 import data.TodoCategory
 import data.TodoItem
 import edu.uwaterloo.cs.todo.lib.ItemImportance
@@ -7,25 +6,22 @@ import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
 
-internal class ListItemTest {
+internal class ListItemTest: CommandTest() {
 
     @Test
     fun nonExistAccordingList_ThrowIdNotFoundException() {
         // Arrange
-        val dataFactory = DataFactory()
         val command = ListItems(dataFactory)
 
         //Act & Assert
-
         assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1")) }
-        dataFactory.clear()
+        dataFactory.clearDatabase()
     }
 
 
     @Test
     fun listSuccess_ItemMatch() {
         // Arrange
-        val dataFactory = DataFactory()
         val command = ListItems(dataFactory)
 
         dataFactory.transaction {
@@ -47,8 +43,6 @@ internal class ListItemTest {
             }
             assertDoesNotThrow { command.parse(arrayOf(("1")))}
         }
-        dataFactory.clear()
-
     }
 }
 

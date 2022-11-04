@@ -13,7 +13,7 @@ class DataFactory(private val url: String = "jdbc:sqlite:file:test?mode=memory&c
     init {
         database = connect()
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
-        createSchema()
+        setupDatabase()
     }
 
     protected fun finalize() {
@@ -29,15 +29,12 @@ class DataFactory(private val url: String = "jdbc:sqlite:file:test?mode=memory&c
         return Database.connect(HikariDataSource(config))
     }
 
-    fun clear() {
+    fun clearDatabase() {
         transaction { SchemaUtils.drop(TodoCategories, TodoItems, inBatch = true) }
-        TransactionManager.closeAndUnregister(database = database)
     }
 
-    private fun createSchema() {
-        org.jetbrains.exposed.sql.transactions.transaction {
-            SchemaUtils.createMissingTablesAndColumns(TodoCategories, TodoItems)
-        }
+    fun setupDatabase() {
+        transaction { SchemaUtils.createMissingTablesAndColumns(TodoCategories, TodoItems) }
     }
 
     fun <T> transaction(block: () -> T): T =

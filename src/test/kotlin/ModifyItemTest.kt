@@ -1,37 +1,39 @@
-import data.DataFactory
 import data.TodoCategory
 import data.TodoItem
 import edu.uwaterloo.cs.todo.lib.ItemImportance
 import exceptions.IdNotFoundException
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
+import sync.SyncService
 
-internal class ModifyItemTest {
+internal class ModifyItemTest: CommandTest() {
 
     @Test
     fun nonExistItem_ThrowIdNotFoundException() {
         // Arrange
-        val dataFactory = DataFactory()
-        val command = ModifyItem(dataFactory)
+        val client = HttpClient(CIO)
+        val syncService = SyncService(client, false)
+        val command = ModifyItem(dataFactory, syncService)
         dataFactory.transaction {
             TodoCategory.new {
                 name = "Physics"
                 favoured = true
             }
         }
-        //Act & Assert
 
+        //Act & Assert
         assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1", "--field" , "name", "a2")) }
-        dataFactory.clear()
     }
 
     @Test
     fun modifyItem_Successful() {
         // Arrange
-        val dataFactory = DataFactory()
-        val command = ModifyItem(dataFactory)
-
+        val client = HttpClient(CIO)
+        val syncService = SyncService(client, false)
+        val command = ModifyItem(dataFactory, syncService)
 
         dataFactory.transaction {
             val category = TodoCategory.new {
@@ -48,8 +50,5 @@ internal class ModifyItemTest {
             assertDoesNotThrow {  command.parse(arrayOf("1", "--field" , "name", "a2")) }
 
         }
-        dataFactory.clear()
-
-
     }
 }

@@ -1,15 +1,13 @@
-import data.DataFactory
 import data.TodoCategory
 import data.TodoItem
 import edu.uwaterloo.cs.todo.lib.ItemImportance
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Test
 
-internal class ListCategoryTest {
+internal class ListCategoryTest: CommandTest() {
     @Test
     fun listSuccess_ShowAllCategory() {
         // Arrange
-        val dataFactory = DataFactory()
         val command = ListCategories(dataFactory)
 
         dataFactory.transaction {
@@ -31,8 +29,6 @@ internal class ListCategoryTest {
             }
             assertDoesNotThrow { command.parse(arrayOf())}
         }
-
-        dataFactory.clear()
     }
 }
 

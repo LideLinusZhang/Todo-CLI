@@ -39,6 +39,7 @@ dependencies {
     implementation 'com.sksamuel.hoplite:hoplite-core:2.6.5'
     implementation 'com.sksamuel.hoplite:hoplite-json:2.6.5'
 
+    testImplementation "io.ktor:ktor-client-mock:$ktor_version"
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
 }
