@@ -34,9 +34,9 @@ class AddItem(private val dataFactory: DataFactory, private val syncService: Syn
         dataFactory.transaction {
             val targetCategory: TodoCategory? = when (searchCategoryBy) {
                 "id" -> if (byUUID)
-                    TodoCategory.findById(categoryIdentifier.toInt())
-                else
                     TodoCategory.find { TodoItems.uniqueId eq UUID.fromString(categoryIdentifier) }.firstOrNull()
+                else
+                    TodoCategory.findById(categoryIdentifier.toInt())
 
                 "name" -> TodoCategory.find { TodoCategories.name eq categoryIdentifier }.firstOrNull()
                 else -> null
