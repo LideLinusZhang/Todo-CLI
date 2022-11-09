@@ -44,6 +44,7 @@ internal class AddItemTest: CommandTest() {
                 name = "A1"
                 importance = ItemImportance.NORMAL
                 categoryId = category.uniqueId
+                favoured = false
                 description = String()
             }
         }

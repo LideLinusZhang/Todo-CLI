@@ -33,12 +33,14 @@ internal class ListItemTest: CommandTest() {
                 name = "A1"
                 importance = ItemImportance.NORMAL
                 categoryId = category.uniqueId
+                favoured = false
                 description = String()
             }
             TodoItem.new {
                 name = "midterm"
                 importance = ItemImportance.NORMAL
                 categoryId = category.uniqueId
+                favoured = false
                 description = String()
             }
             assertDoesNotThrow { command.parse(arrayOf(("1")))}

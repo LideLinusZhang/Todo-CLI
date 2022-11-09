@@ -20,9 +20,14 @@ import java.util.*
 class AddItem(private val dataFactory: DataFactory, private val syncService: SyncService) :
     CliktCommand(help = "Add a todo item to a pre-existing category.") {
     private val itemImportance by option("--importance").choice(ItemImportance.values().associateBy { it.name })
-    private val itemDeadline by option("--deadline").convert { LocalDate.parse(it) }
+    private val itemDeadline by option(
+        "--deadline", help = "Deadline of the item, in the format of YYYY-MM-DD."
+    ).convert { LocalDate.parse(it) }
     private val searchCategoryBy by option(help = "Type of identifiers used to determine which category to add to")
         .choice("id", "name").required()
+    private val isFavoured by option(
+        "--favoured", help = "If entered, the added item will be set to be favoured."
+    ).flag()
     private val byUUID by option("--uuid", hidden = true).flag()
 
     private val categoryIdentifier by argument(help = "Value of the identifier used to determine which category to add to")
@@ -52,6 +57,7 @@ class AddItem(private val dataFactory: DataFactory, private val syncService: Syn
             val model: TodoItemModel = TodoItem.new {
                 name = itemName
                 description = itemDescription ?: String()
+                favoured = isFavoured
                 importance = itemImportance ?: ItemImportance.NORMAL
                 deadline = itemDeadline
                 categoryId = targetCategory.uniqueId

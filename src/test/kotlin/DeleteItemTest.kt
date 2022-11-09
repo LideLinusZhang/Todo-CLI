@@ -37,6 +37,7 @@ internal class DeleteItemTest: CommandTest() {
                 name = "A1"
                 importance = ItemImportance.NORMAL
                 categoryId = category.uniqueId
+                favoured = false
                 description = String()
             }
             assertDoesNotThrow { command.parse(arrayOf(("1"))) }

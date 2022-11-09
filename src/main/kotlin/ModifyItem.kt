@@ -21,7 +21,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
     CliktCommand("Modify a todo item.") {
     private val byUUID by option("--uuid", hidden = true).flag(default = false)
     private val itemId by argument(help = "ID of the todo item.")
-    private val field by option().choice("name", "description", "importance", "deadline", ignoreCase = true).required()
+    private val field by option(help = "Field to modify.").choice("name", "description", "favoured", "importance", "deadline", ignoreCase = true).required()
     private val value by argument(help = "To remove deadline, enter \"none\".")
     private val terminal = Terminal()
 
@@ -38,27 +38,32 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
                 when (field) {
                     "name" -> {
                         item.name = value
-                        TodoItemModificationModel(item.name, null, null, null, item.modifiedTime)
+                        TodoItemModificationModel(item.name, null, null, null, null, item.modifiedTime)
                     }
 
                     "description" -> {
                         item.description = value
-                        TodoItemModificationModel(null, item.description, null, null, item.modifiedTime)
+                        TodoItemModificationModel(null, item.description, null, null, null, item.modifiedTime)
+                    }
+
+                    "favoured" -> {
+                        item.favoured = value.toBoolean()
+                        TodoItemModificationModel(null, null, item.favoured, null, null, item.modifiedTime)
                     }
 
                     "importance" -> {
                         item.importance = enumValueOf(value)
-                        TodoItemModificationModel(null, null, item.importance, null, item.modifiedTime)
+                        TodoItemModificationModel(null, null, null, item.importance, null, item.modifiedTime)
                     }
 
                     "deadline" -> {
                         if (value.lowercase() == "none")
                             item.deadline = null
                         else item.deadline = LocalDate.parse(value)
-                        TodoItemModificationModel(null, null, null, item.deadline, item.modifiedTime)
+                        TodoItemModificationModel(null, null, null, null, item.deadline, item.modifiedTime)
                     }
 
-                    else -> TodoItemModificationModel(null, null, null, null, item.modifiedTime)
+                    else -> TodoItemModificationModel(null, null, null, null, null, item.modifiedTime)
                 }
 
             runBlocking { syncService.modifyItem(item.uniqueId, modificationModel) }
