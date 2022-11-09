@@ -45,6 +45,7 @@ internal class ModifyItemTest: CommandTest() {
                 importance = ItemImportance.NORMAL
                 categoryId = category.uniqueId
                 description = String()
+                favoured = false
             }
             //Act & Assert
             assertDoesNotThrow {  command.parse(arrayOf("1", "--field" , "name", "a2")) }
