@@ -93,6 +93,7 @@ class SyncService(private val client: HttpClient, url: String) {
         val signUpURL = URLBuilder(userOperationURL).appendPathSegments("signup").build()
 
         val response = client.post(signUpURL) {
+            contentType(ContentType.Application.Json)
             setBody(UserModel(userName, hashedPassword))
         }
 
