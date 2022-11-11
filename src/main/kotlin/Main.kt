@@ -67,8 +67,8 @@ fun main(args: Array<String>) {
     }
 
     val syncService = if(shouldSync) service else null
-    if (service !== null)
-        syncFromServer(factory, service)
+    if (syncService !== null)
+        syncFromServer(factory, syncService)
 
     Cli().subcommands(
         AddCategory(factory, syncService),
