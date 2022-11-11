@@ -1,3 +1,4 @@
+import commands.ListCategories
 import data.TodoCategory
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Test

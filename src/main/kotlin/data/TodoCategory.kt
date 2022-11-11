@@ -22,5 +22,7 @@ class TodoCategory(id: EntityID<Int>) : IntEntity(id) {
             { Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.currentSystemDefault()) }
         )
 
+    val items by TodoItem referrersOn TodoItems.categoryId
+
     fun toModel(): TodoCategoryModel = TodoCategoryModel(uniqueId, name, favoured, modifiedTime)
 }

@@ -1,22 +1,18 @@
+import commands.ModifyItem
 import data.TodoCategory
 import data.TodoItem
 import edu.uwaterloo.cs.todo.lib.ItemImportance
 import exceptions.IdNotFoundException
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
-import sync.SyncService
 
 internal class ModifyItemTest: CommandTest() {
 
     @Test
     fun nonExistItem_ThrowIdNotFoundException() {
         // Arrange
-        val client = HttpClient(CIO)
-        val syncService = SyncService(client, false)
-        val command = ModifyItem(dataFactory, syncService)
+        val command = ModifyItem(dataFactory, null)
         dataFactory.transaction {
             TodoCategory.new {
                 name = "Physics"
@@ -31,9 +27,7 @@ internal class ModifyItemTest: CommandTest() {
     @Test
     fun modifyItem_Successful() {
         // Arrange
-        val client = HttpClient(CIO)
-        val syncService = SyncService(client, false)
-        val command = ModifyItem(dataFactory, syncService)
+        val command = ModifyItem(dataFactory, null)
 
         dataFactory.transaction {
             val category = TodoCategory.new {
@@ -47,9 +41,9 @@ internal class ModifyItemTest: CommandTest() {
                 description = String()
                 favoured = false
             }
+
             //Act & Assert
             assertDoesNotThrow {  command.parse(arrayOf("1", "--field" , "name", "a2")) }
-
         }
     }
 }

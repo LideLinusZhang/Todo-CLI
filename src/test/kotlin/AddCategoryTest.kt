@@ -1,19 +1,15 @@
 import com.github.ajalt.clikt.core.UsageError
+import commands.AddCategory
 import data.TodoCategories
 import data.TodoCategory
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import sync.SyncService
 
 internal class AddCategoryTest: CommandTest() {
     @Test
     fun addCategory_AllFieldsMatchInput() {
         // Arrange
-        val client = HttpClient(CIO)
-        val syncService = SyncService(client, false)
-        val command = AddCategory(dataFactory, syncService)
+        val command = AddCategory(dataFactory, null)
 
         //Act & Assert
         assertDoesNotThrow { command.parse(arrayOf("Maths")) }
@@ -33,13 +29,10 @@ internal class AddCategoryTest: CommandTest() {
     @Test
     fun doubleCategory_ThrowCategoryAlreadyExistException() {
         // Arrange
-        val client = HttpClient(CIO)
-        val syncService = SyncService(client, false)
-        val command = AddCategory(dataFactory, syncService)
-
-        assertDoesNotThrow { command.parse(arrayOf("Maths")) }
+        val command = AddCategory(dataFactory, null)
 
         //Act & Assert
+        assertDoesNotThrow { command.parse(arrayOf("Maths")) }
         assertThrowsExactly(UsageError::class.java) { command.parse(arrayOf("Maths", "--favoured")) }
     }
 }

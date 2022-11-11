@@ -1,3 +1,5 @@
+package commands
+
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
@@ -9,6 +11,7 @@ import data.DataFactory
 import data.TodoCategory
 import edu.uwaterloo.cs.todo.lib.TodoCategoryModificationModel
 import exceptions.IdNotFoundException
+import getCategoryById
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -16,7 +19,7 @@ import kotlinx.datetime.toLocalDateTime
 import sync.SyncService
 import kotlin.reflect.typeOf
 
-class ModifyCategory(private val dataFactory: DataFactory, private val syncService: SyncService) :
+class ModifyCategory(private val dataFactory: DataFactory, private val syncService: SyncService?) :
     CliktCommand("Modify a todo category.") {
     private val byUUID by option("--uuid", hidden = true).flag(default = false)
     private val categoryId by argument(help = "ID of the todo category.")
@@ -48,7 +51,7 @@ class ModifyCategory(private val dataFactory: DataFactory, private val syncServi
                     else -> TodoCategoryModificationModel(null, null, category.modifiedTime)
                 }
 
-            runBlocking { syncService.modifyCategory(category.uniqueId, modificationModel) }
+            runBlocking { syncService?.modifyCategory(category.uniqueId, modificationModel) }
 
             terminal.println("Category modified successfully.")
         }

@@ -1,3 +1,5 @@
+package commands
+
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.arguments.argument
@@ -12,7 +14,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.select
 import sync.SyncService
 
-class AddCategory(private val dataFactory: DataFactory, private val syncService: SyncService) :
+class AddCategory(private val dataFactory: DataFactory, private val syncService: SyncService?) :
     CliktCommand("Add a todo category.") {
     private val categoryName by argument(help = "Name of the category to be added.")
     private val isFavoured by option(
@@ -24,14 +26,14 @@ class AddCategory(private val dataFactory: DataFactory, private val syncService:
     override fun run() {
         dataFactory.transaction {
             if (!TodoCategories.select { TodoCategories.name eq categoryName }.empty())
-                throw UsageError(text = "The Todo Category with the same name already exists.") // Name must be unique, TODO: Better error reporting
+                throw UsageError(text = "Category with the same name already exists.") // Name must be unique
 
             val model: TodoCategoryModel = TodoCategory.new {
                 name = categoryName
                 favoured = isFavoured
             }.toModel()
 
-            runBlocking { syncService.addCategory(model) }
+            runBlocking { syncService?.addCategory(model) }
 
             terminal.println("Category added successfully.")
         }

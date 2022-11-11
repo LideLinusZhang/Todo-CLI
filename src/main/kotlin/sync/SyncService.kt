@@ -1,26 +1,22 @@
 package sync
 
-import edu.uwaterloo.cs.todo.lib.TodoCategoryModel
-import edu.uwaterloo.cs.todo.lib.TodoCategoryModificationModel
-import edu.uwaterloo.cs.todo.lib.TodoItemModel
-import edu.uwaterloo.cs.todo.lib.TodoItemModificationModel
+import edu.uwaterloo.cs.todo.lib.*
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import java.util.*
 
-class SyncService(private val client: HttpClient, private val enabled: Boolean, url: String = "") {
+class SyncService(private val client: HttpClient, url: String) {
     private val categoryOperationURL = URLBuilder(url).appendPathSegments("category").build()
     private val itemOperationURL = URLBuilder(url).appendPathSegments("item").build()
+    private val userOperationURL = URLBuilder(url).appendPathSegments("user").build()
 
     protected fun finalize() {
         client.close()
     }
 
     suspend fun syncDatabase(): Pair<List<TodoCategoryModel>, List<TodoItemModel>> {
-        if (!enabled) return Pair(listOf(), listOf())
-
         val categoriesOnServer = client.get(categoryOperationURL).body<List<TodoCategoryModel>>()
         val itemsOnServer = mutableListOf<TodoItemModel>()
 
@@ -34,8 +30,6 @@ class SyncService(private val client: HttpClient, private val enabled: Boolean, 
     }
 
     suspend fun addItem(categoryId: UUID, item: TodoItemModel) {
-        if (!enabled) return
-
         client.post(itemOperationURL) {
             parameter("categoryUniqueId", categoryId)
             contentType(ContentType.Application.Json)
@@ -44,8 +38,6 @@ class SyncService(private val client: HttpClient, private val enabled: Boolean, 
     }
 
     suspend fun addCategory(category: TodoCategoryModel) {
-        if (!enabled) return
-
         client.post(categoryOperationURL) {
             contentType(ContentType.Application.Json)
             setBody(category)
@@ -53,24 +45,18 @@ class SyncService(private val client: HttpClient, private val enabled: Boolean, 
     }
 
     suspend fun deleteItem(itemId: UUID) {
-        if (!enabled) return
-
         client.delete(itemOperationURL) {
             parameter("id", itemId)
         }
     }
 
     suspend fun deleteCategory(categoryId: UUID) {
-        if (!enabled) return
-
         client.delete(categoryOperationURL) {
             parameter("id", categoryId)
         }
     }
 
     suspend fun modifyItem(itemId: UUID, modification: TodoItemModificationModel) {
-        if (!enabled) return
-
         client.post(itemOperationURL) {
             parameter("id", itemId)
             setBody(modification)
@@ -78,11 +64,17 @@ class SyncService(private val client: HttpClient, private val enabled: Boolean, 
     }
 
     suspend fun modifyCategory(categoryId: UUID, modification: TodoCategoryModificationModel) {
-        if (!enabled) return
-
         client.post(categoryOperationURL) {
             parameter("id", categoryId)
             setBody(modification)
+        }
+    }
+
+    suspend fun signUp(userName: String, hashedPassword: ByteArray) {
+        val signUpURL = URLBuilder(userOperationURL).appendPathSegments("signup").build()
+
+        client.post(signUpURL) {
+            setBody(UserModel(userName, hashedPassword))
         }
     }
 }
