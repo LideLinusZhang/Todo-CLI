@@ -21,7 +21,8 @@ class Cli : NoOpCliktCommand()
 fun main(args: Array<String>) {
     val factory = DataFactory("jdbc:sqlite:./data.db")
     val configFile = File("config.json")
-    val syncService: SyncService?
+    val service: SyncService?
+    val shouldSync: Boolean
 
     if (configFile.exists()) {
         val config: SyncServiceConfig = try {
@@ -34,29 +35,40 @@ fun main(args: Array<String>) {
         }
 
         if (config.enabled) {
-            val client = if (config.userCredential === null)
+            val client = if (config.userCredential === null) {
+                shouldSync = false
                 HttpClient(CIO) { install(ContentNegotiation) { json() } }
-            else HttpClient(CIO) {
-                install(Auth) {
-                    digest {
-                        credentials {
-                            DigestAuthCredentials(
-                                username = config.userCredential.userName,
-                                password = config.userCredential.password
-                            )
+            } else {
+                shouldSync = true
+                HttpClient(CIO) {
+                    install(Auth) {
+                        digest {
+                            credentials {
+                                DigestAuthCredentials(
+                                    username = config.userCredential.userName,
+                                    password = config.userCredential.password
+                                )
+                            }
+                            realm = edu.uwaterloo.cs.todo.lib.realm
                         }
-                        realm = edu.uwaterloo.cs.todo.lib.realm
                     }
+                    install(ContentNegotiation) { json() }
                 }
-                install(ContentNegotiation) { json() }
             }
 
-            syncService = SyncService(client, config.serverUrl!!)
-        } else syncService = null
-    } else syncService = null
+            service = SyncService(client, config.serverUrl!!)
+        } else {
+            shouldSync = false
+            service = null
+        }
+    } else {
+        shouldSync = false
+        service = null
+    }
 
-    if (syncService !== null)
-        syncFromServer(factory, syncService)
+    val syncService = if(shouldSync) service else null
+    if (service !== null)
+        syncFromServer(factory, service)
 
     Cli().subcommands(
         AddCategory(factory, syncService),
@@ -67,7 +79,7 @@ fun main(args: Array<String>) {
         ModifyCategory(factory, syncService),
         ListCategories(factory),
         ListItems(factory),
-        SignUp(syncService),
+        SignUp(service),
         CompletionCommand()
     ).main(args)
 }
