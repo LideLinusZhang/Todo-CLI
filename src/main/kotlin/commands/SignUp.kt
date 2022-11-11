@@ -14,6 +14,9 @@ class SignUp(private val syncService: SyncService?) : CliktCommand("Create an ac
         val userName = prompt("Username")!!
         val password = prompt("Password", hideInput = true, requireConfirmation = true)!!
 
-        runBlocking { syncService.signUp(userName, getHashedPassword(userName, password)) }
+        val response = runBlocking { syncService.signUp(userName, getHashedPassword(userName, password)) }
+
+        if (!response.successful)
+            throw UsageError("Registration of new account failed: ${response.errorMessage}")
     }
 }
