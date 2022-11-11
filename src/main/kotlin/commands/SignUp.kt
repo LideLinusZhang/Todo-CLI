@@ -2,11 +2,14 @@ package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.mordant.terminal.Terminal
 import edu.uwaterloo.cs.todo.lib.getHashedPassword
 import kotlinx.coroutines.runBlocking
 import sync.SyncService
 
 class SignUp(private val syncService: SyncService?) : CliktCommand("Create an account for synchronization.") {
+    private val terminal = Terminal()
+
     override fun run() {
         if(syncService === null)
             throw UsageError("Cannot connect to the Internet for sign up with synchronization service disabled.")
@@ -18,5 +21,6 @@ class SignUp(private val syncService: SyncService?) : CliktCommand("Create an ac
 
         if (!response.successful)
             throw UsageError("Registration of new account failed: ${response.errorMessage}")
+        else terminal.println("Registration successful.")
     }
 }

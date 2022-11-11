@@ -1,5 +1,6 @@
 import com.github.ajalt.clikt.completion.CompletionCommand
 import com.github.ajalt.clikt.core.NoOpCliktCommand
+import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.core.subcommands
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addFileSource
@@ -23,10 +24,14 @@ fun main(args: Array<String>) {
     val syncService: SyncService?
 
     if (configFile.exists()) {
-        val config: SyncServiceConfig = ConfigLoaderBuilder.default()
-            .addFileSource(configFile)
-            .build()
-            .loadConfigOrThrow()
+        val config: SyncServiceConfig = try {
+            ConfigLoaderBuilder.default()
+                .addFileSource(configFile)
+                .build()
+                .loadConfigOrThrow()
+        } catch (_: Exception) {
+            throw UsageError("Configuration corrupted.")
+        }
 
         if (config.enabled) {
             val client = if (config.userCredential === null)

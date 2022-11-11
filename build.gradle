@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'edu.uwaterloo.cs'
-version = '1.1-DEV'
+version = '1.2-DEV'
 
 repositories {
     mavenCentral()
