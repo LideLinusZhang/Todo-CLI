@@ -1,3 +1,4 @@
+import com.github.ajalt.clikt.completion.CompletionCommand
 import com.github.ajalt.clikt.core.NoOpCliktCommand
 import com.github.ajalt.clikt.core.subcommands
 import com.sksamuel.hoplite.ConfigLoaderBuilder
@@ -61,6 +62,7 @@ fun main(args: Array<String>) {
         ModifyCategory(factory, syncService),
         ListCategories(factory),
         ListItems(factory),
-        SignUp(syncService)
+        SignUp(syncService),
+        CompletionCommand()
     ).main(args)
 }

@@ -1,6 +1,7 @@
 package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -35,23 +36,31 @@ class ModifyCategory(private val dataFactory: DataFactory, private val syncServi
                 throw IdNotFoundException(categoryId.toInt(), typeOf<TodoCategory>())
 
             category.modifiedTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            val modification: () -> Unit
 
             val modificationModel: TodoCategoryModificationModel =
                 when (field) {
                     "name" -> {
-                        category.name = value
+                        modification = { category.name = value }
                         TodoCategoryModificationModel(category.name, null, category.modifiedTime)
                     }
 
                     "description" -> {
-                        category.favoured = value.toBoolean()
+                        modification = { category.favoured = value.toBoolean() }
                         TodoCategoryModificationModel(null, category.favoured, category.modifiedTime)
                     }
 
-                    else -> TodoCategoryModificationModel(null, null, category.modifiedTime)
+                    else -> {
+                        modification = {}
+                        TodoCategoryModificationModel(null, null, category.modifiedTime)
+                    }
                 }
 
-            runBlocking { syncService?.modifyCategory(category.uniqueId, modificationModel) }
+            val response = runBlocking { syncService?.modifyCategory(category.uniqueId, modificationModel) }
+            if (response !== null && !response.successful)
+                throw UsageError("Modifying category failed: ${response.errorMessage}.")
+
+            modification.invoke()
 
             terminal.println("Category modified successfully.")
         }

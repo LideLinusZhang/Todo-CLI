@@ -1,6 +1,7 @@
 package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -27,7 +28,11 @@ class DeleteCategory(private val dataFactory: DataFactory, private val syncServi
             if (category === null)
                 throw IdNotFoundException(categoryId.toInt(), typeOf<TodoCategory>())
 
-            runBlocking { syncService?.deleteCategory(category.uniqueId) }
+            val response = runBlocking { syncService?.deleteCategory(category.uniqueId) }
+            if (response !== null && !response.successful) {
+                throw UsageError("Deleting category failed: ${response.errorMessage}.")
+            }
+
             category.delete()
 
             terminal.println("Category deleted successfully.")

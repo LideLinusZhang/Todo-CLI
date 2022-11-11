@@ -1,6 +1,7 @@
 package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -46,10 +47,12 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
 
             item.modifiedTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
+            val modification: () -> Unit
+
             val modificationModel: TodoItemModificationModel =
                 when (field) {
                     "name" -> {
-                        item.name = value
+                        modification = { item.name = value }
                         TodoItemModificationModel(
                             name = item.name,
                             description = null,
@@ -61,7 +64,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
                     }
 
                     "description" -> {
-                        item.description = value
+                        modification = { item.description = value }
                         TodoItemModificationModel(
                             name = null,
                             description = item.description,
@@ -73,7 +76,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
                     }
 
                     "favoured" -> {
-                        item.favoured = value.toBoolean()
+                        modification = { item.favoured = value.toBoolean() }
                         TodoItemModificationModel(
                             name = null,
                             description = null,
@@ -85,7 +88,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
                     }
 
                     "importance" -> {
-                        item.importance = enumValueOf(value)
+                        modification = { item.importance = enumValueOf(value) }
                         TodoItemModificationModel(
                             name = null,
                             description = null,
@@ -97,9 +100,11 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
                     }
 
                     "deadline" -> {
-                        if (value.lowercase() == deadlineRemover)
-                            item.deadline = null
-                        else item.deadline = LocalDate.parse(value)
+                        modification = if (value.lowercase() == deadlineRemover) {
+                            { item.deadline = null }
+                        } else {
+                            { item.deadline = LocalDate.parse(value) }
+                        }
                         TodoItemModificationModel(
                             name = null,
                             description = null,
@@ -110,17 +115,24 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
                         )
                     }
 
-                    else -> TodoItemModificationModel(
-                        name = null,
-                        description = null,
-                        favoured = null,
-                        importance = null,
-                        deadline = null,
-                        modifiedTime = item.modifiedTime
-                    )
+                    else -> {
+                        modification = {}
+                        TodoItemModificationModel(
+                            name = null,
+                            description = null,
+                            favoured = null,
+                            importance = null,
+                            deadline = null,
+                            modifiedTime = item.modifiedTime
+                        )
+                    }
                 }
 
-            runBlocking { syncService?.modifyItem(item.uniqueId, modificationModel) }
+            val response = runBlocking { syncService?.modifyItem(item.uniqueId, modificationModel) }
+            if (response !== null && !response.successful)
+                throw UsageError("Modifying item failed: ${response.errorMessage}.")
+
+            modification.invoke()
 
             terminal.println("Item modified successfully.")
         }

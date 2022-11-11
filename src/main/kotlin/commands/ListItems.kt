@@ -4,6 +4,8 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.mordant.rendering.TextAlign
+import com.github.ajalt.mordant.rendering.TextColors
 import com.github.ajalt.mordant.table.Borders
 import com.github.ajalt.mordant.table.ColumnWidth
 import com.github.ajalt.mordant.table.table
@@ -40,22 +42,30 @@ class ListItems(private val dataFactory: DataFactory) :
             tableBorders = Borders.NONE
             header {
                 style(bold = true)
-                row("ID", "Name", "Description", "Importance", "Deadline")
+                row("ID", "Name", "Description", "Favoured?", "Importance", "Deadline")
             }
             body {
                 cellBorders = Borders.LEFT_RIGHT
                 items.forEach {
                     row {
-                        cell(it.id); cell(it.name); cell(it.description)
-                        cell(it.importance); cell(it.deadline ?: "N/A")
+                        cell(it.id)
+                        cell(it.name)
+                        cell(it.description)
+                        cell(if (it.favoured) "Yes" else "No") {
+                            val color = if (it.favoured) TextColors.brightGreen else TextColors.brightRed
+                            style(color = color, bold = true)
+                        }
+                        cell(it.importance)
+                        cell(it.deadline ?: "N/A")
                     }
                 }
             }
-            column(0) { width = ColumnWidth.Fixed(14) }
-            column(1) { width = ColumnWidth.Fixed(20) }
-            column(2) { width = ColumnWidth.Fixed(20) }
-            column(3) { width = ColumnWidth.Fixed(15) }
-            column(4) { width = ColumnWidth.Fixed(15) }
+            column(0) { width = ColumnWidth.Fixed(5); align = TextAlign.CENTER }
+            column(1) { width = ColumnWidth.Expand(0.3) }
+            column(2) { width = ColumnWidth.Expand(0.7) }
+            column(3) { width = ColumnWidth.Fixed(15); align = TextAlign.CENTER }
+            column(3) { width = ColumnWidth.Fixed(15); align = TextAlign.CENTER }
+            column(4) { width = ColumnWidth.Fixed(15); align = TextAlign.CENTER }
         })
     }
 

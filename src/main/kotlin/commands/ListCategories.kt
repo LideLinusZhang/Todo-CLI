@@ -36,20 +36,18 @@ class ListCategories(private val dataFactory: DataFactory) : CliktCommand("Displ
                 cellBorders = Borders.LEFT_RIGHT
                 categories.forEach {
                     row {
-                        cell(it.id); cell(it.name)
+                        cell(it.id)
+                        cell(it.name)
                         cell(if (it.favoured) "Yes" else "No") {
-                            align = TextAlign.CENTER
-                            if (it.favoured)
-                                style(color = TextColors.brightGreen, bold = true)
-                            else
-                                style(color = TextColors.brightRed, bold = true)
+                            val color = if (it.favoured) TextColors.brightGreen else TextColors.brightRed
+                            style(color = color, bold = true)
                         }
                     }
                 }
             }
-            column(0) { width = ColumnWidth.Fixed(10) }
-            column(1) { width = ColumnWidth.Fixed(50) }
-            column(2) { width = ColumnWidth.Fixed(15) }
+            column(0) { width = ColumnWidth.Fixed(5); align = TextAlign.CENTER }
+            column(1) { width = ColumnWidth.Expand() }
+            column(2) { width = ColumnWidth.Fixed(15); align = TextAlign.CENTER }
         })
     }
 

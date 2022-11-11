@@ -9,7 +9,6 @@ import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
 import data.TodoCategories
 import data.TodoCategory
-import edu.uwaterloo.cs.todo.lib.TodoCategoryModel
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.select
 import sync.SyncService
@@ -28,12 +27,16 @@ class AddCategory(private val dataFactory: DataFactory, private val syncService:
             if (!TodoCategories.select { TodoCategories.name eq categoryName }.empty())
                 throw UsageError(text = "Category with the same name already exists.") // Name must be unique
 
-            val model: TodoCategoryModel = TodoCategory.new {
+            val newCategory = TodoCategory.new {
                 name = categoryName
                 favoured = isFavoured
-            }.toModel()
+            }
 
-            runBlocking { syncService?.addCategory(model) }
+            val response = runBlocking { syncService?.addCategory(newCategory.toModel()) }
+            if (response !== null && !response.successful) {
+                newCategory.delete()
+                throw UsageError("Adding category failed: ${response.errorMessage}.")
+            }
 
             terminal.println("Category added successfully.")
         }
