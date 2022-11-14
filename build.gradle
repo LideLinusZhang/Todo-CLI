@@ -37,8 +37,6 @@ dependencies {
     implementation "org.xerial:sqlite-jdbc:3.39.3.0"
     implementation "org.slf4j:slf4j-nop:2.0.3"
     implementation "com.zaxxer:HikariCP:5.0.1"
-    implementation "com.sksamuel.hoplite:hoplite-core:2.6.5"
-    implementation "com.sksamuel.hoplite:hoplite-json:2.6.5"
 
     testImplementation "io.ktor:ktor-client-mock:$ktor_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test"
