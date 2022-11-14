@@ -7,13 +7,13 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
 
-class DataFactory(private val url: String = "jdbc:sqlite:file:test?mode=memory&cache=shared") {
+class DataFactory(private val url: String = "jdbc:sqlite:file:test?mode=memory&cache=shared", doSetup: Boolean = true) {
     private val database: Database
 
     init {
         database = connect()
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
-        setupDatabase()
+        if (doSetup) setupDatabase()
     }
 
     protected fun finalize() {
@@ -24,17 +24,16 @@ class DataFactory(private val url: String = "jdbc:sqlite:file:test?mode=memory&c
         val config = HikariConfig()
         config.jdbcUrl = url
         config.driverClassName = "org.sqlite.JDBC"
-        config.validate()
 
         return Database.connect(HikariDataSource(config))
     }
 
-    fun clearDatabase() {
-        transaction { SchemaUtils.drop(TodoCategories, TodoItems, inBatch = true) }
+    fun setupDatabase() {
+        transaction { SchemaUtils.createMissingTablesAndColumns(TodoCategories, TodoItems, withLogs = false) }
     }
 
-    fun setupDatabase() {
-        transaction { SchemaUtils.createMissingTablesAndColumns(TodoCategories, TodoItems) }
+    fun clearDatabase() {
+        transaction { SchemaUtils.drop(TodoCategories, TodoItems, inBatch = true) }
     }
 
     fun <T> transaction(block: () -> T): T =

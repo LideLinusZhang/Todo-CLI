@@ -1,5 +1,7 @@
+package commands
+
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -7,12 +9,11 @@ import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
 import data.TodoCategories
 import data.TodoCategory
-import edu.uwaterloo.cs.todo.lib.TodoCategoryModel
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.select
-import sync.SyncService
+import sync.CloudService
 
-class AddCategory(private val dataFactory: DataFactory, private val syncService: SyncService) :
+class AddCategory(private val dataFactory: DataFactory, private val cloudService: CloudService?) :
     CliktCommand("Add a todo category.") {
     private val categoryName by argument(help = "Name of the category to be added.")
     private val isFavoured by option(
@@ -24,14 +25,18 @@ class AddCategory(private val dataFactory: DataFactory, private val syncService:
     override fun run() {
         dataFactory.transaction {
             if (!TodoCategories.select { TodoCategories.name eq categoryName }.empty())
-                throw UsageError(text = "The Todo Category with the same name already exists.") // Name must be unique, TODO: Better error reporting
+                throw PrintMessage("Category with the same name already exists.", error = true) // Name must be unique
 
-            val model: TodoCategoryModel = TodoCategory.new {
+            val newCategory = TodoCategory.new {
                 name = categoryName
                 favoured = isFavoured
-            }.toModel()
+            }
 
-            runBlocking { syncService.addCategory(model) }
+            val response = runBlocking { cloudService?.addCategory(newCategory.toModel()) }
+            if (response !== null && !response.successful) {
+                newCategory.delete()
+                throw PrintMessage("Adding category failed: ${response.errorMessage}.", error = true)
+            }
 
             terminal.println("Category added successfully.")
         }

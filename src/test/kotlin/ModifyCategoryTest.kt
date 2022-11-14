@@ -1,19 +1,15 @@
+import commands.ModifyCategory
 import data.TodoCategory
 import exceptions.IdNotFoundException
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
-import sync.SyncService
 
-internal class ModifyCategoryTest: CommandTest() {
+internal class ModifyCategoryTest : CommandTest() {
     @Test
     fun nonExistCategory_ThrowIdNotFoundException() {
         // Arrange
-        val client = HttpClient(CIO)
-        val syncService = SyncService(client, false)
-        val command = ModifyCategory(dataFactory, syncService)
+        val command = ModifyCategory(dataFactory, null)
 
         //Act & Assert
         assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1", "--field", "name", "Math")) }
@@ -22,9 +18,7 @@ internal class ModifyCategoryTest: CommandTest() {
     @Test
     fun modifyCategory_Successful() {
         // Arrange
-        val client = HttpClient(CIO)
-        val syncService = SyncService(client, false)
-        val command = ModifyCategory(dataFactory, syncService)
+        val command = ModifyCategory(dataFactory, null)
 
         dataFactory.transaction {
             TodoCategory.new {

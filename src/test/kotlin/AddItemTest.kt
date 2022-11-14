@@ -1,21 +1,17 @@
-import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.core.PrintMessage
+import commands.AddItem
 import data.TodoCategory
 import data.TodoItem
 import edu.uwaterloo.cs.todo.lib.ItemImportance
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
-import sync.SyncService
 
-internal class AddItemTest: CommandTest() {
+internal class AddItemTest : CommandTest() {
     @Test
     fun addItem_Successful() {
         // Arrange
-        val client = HttpClient(CIO)
-        val syncService = SyncService(client, false)
-        val command = AddItem(dataFactory, syncService)
+        val command = AddItem(dataFactory, null)
 
         dataFactory.transaction {
             TodoCategory.new {
@@ -31,9 +27,7 @@ internal class AddItemTest: CommandTest() {
     @Test
     fun doubleItem_ThrowItemAlreadyExistException() {
         // Arrange
-        val client = HttpClient(CIO)
-        val syncService = SyncService(client, false)
-        val command = AddItem(dataFactory, syncService)
+        val command = AddItem(dataFactory, null)
 
         dataFactory.transaction {
             val category = TodoCategory.new {
@@ -50,6 +44,6 @@ internal class AddItemTest: CommandTest() {
         }
 
         //Act & Assert
-        assertThrowsExactly(UsageError::class.java) { command.parse(arrayOf("--search-category-by", "id", "1", "A1")) }
+        assertThrowsExactly(PrintMessage::class.java) { command.parse(arrayOf("--search-category-by", "id", "1", "A1")) }
     }
 }

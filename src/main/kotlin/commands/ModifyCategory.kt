@@ -1,4 +1,7 @@
+package commands
+
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -9,14 +12,15 @@ import data.DataFactory
 import data.TodoCategory
 import edu.uwaterloo.cs.todo.lib.TodoCategoryModificationModel
 import exceptions.IdNotFoundException
+import getCategoryById
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import sync.SyncService
+import sync.CloudService
 import kotlin.reflect.typeOf
 
-class ModifyCategory(private val dataFactory: DataFactory, private val syncService: SyncService) :
+class ModifyCategory(private val dataFactory: DataFactory, private val cloudService: CloudService?) :
     CliktCommand("Modify a todo category.") {
     private val byUUID by option("--uuid", hidden = true).flag(default = false)
     private val categoryId by argument(help = "ID of the todo category.")
@@ -32,23 +36,31 @@ class ModifyCategory(private val dataFactory: DataFactory, private val syncServi
                 throw IdNotFoundException(categoryId.toInt(), typeOf<TodoCategory>())
 
             category.modifiedTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            val modification: () -> Unit
 
             val modificationModel: TodoCategoryModificationModel =
                 when (field) {
                     "name" -> {
-                        category.name = value
+                        modification = { category.name = value }
                         TodoCategoryModificationModel(category.name, null, category.modifiedTime)
                     }
 
                     "description" -> {
-                        category.favoured = value.toBoolean()
+                        modification = { category.favoured = value.toBoolean() }
                         TodoCategoryModificationModel(null, category.favoured, category.modifiedTime)
                     }
 
-                    else -> TodoCategoryModificationModel(null, null, category.modifiedTime)
+                    else -> {
+                        modification = {}
+                        TodoCategoryModificationModel(null, null, category.modifiedTime)
+                    }
                 }
 
-            runBlocking { syncService.modifyCategory(category.uniqueId, modificationModel) }
+            val response = runBlocking { cloudService?.modifyCategory(category.uniqueId, modificationModel) }
+            if (response !== null && !response.successful)
+                throw PrintMessage("Modifying category failed: ${response.errorMessage}.", error = true)
+
+            modification.invoke()
 
             terminal.println("Category modified successfully.")
         }
