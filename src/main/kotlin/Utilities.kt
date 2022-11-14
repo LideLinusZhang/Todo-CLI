@@ -12,8 +12,9 @@ import sync.CloudService
 import sync.CloudServiceConfig
 import java.util.*
 
+const val databaseFileName: String = "data.db"
 const val configFileName: String = "config.json"
-const val databaseConnectionString = "jdbc:sqlite:./data.db"
+const val databaseConnectionString = "jdbc:sqlite:./$databaseFileName"
 
 fun createCloudService(config: CloudServiceConfig): CloudService? {
     return if (config.enabled) {

@@ -10,10 +10,12 @@ import sync.CloudService
 import sync.CloudServiceConfig
 import java.io.File
 
-class Cli : NoOpCliktCommand()
+class Cli : NoOpCliktCommand(name = "todo-cli")
 
 fun main(args: Array<String>) {
-    val factory = DataFactory(databaseConnectionString)
+    val dbFile = File(databaseFileName)
+    val factory = DataFactory(databaseConnectionString, doSetup = !dbFile.exists())
+
     val configFile = File(configFileName)
     var shouldSync = false
 
