@@ -24,7 +24,6 @@ class DataFactory(private val url: String = "jdbc:sqlite:file:test?mode=memory&c
         val config = HikariConfig()
         config.jdbcUrl = url
         config.driverClassName = "org.sqlite.JDBC"
-        config.validate()
 
         return Database.connect(HikariDataSource(config))
     }
