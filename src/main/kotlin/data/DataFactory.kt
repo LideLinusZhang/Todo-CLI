@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
 
-class DataFactory(private val url: String = "jdbc:sqlite:file:test?mode=memory&cache=shared", doSetup: Boolean ) {
+class DataFactory(private val url: String = "jdbc:sqlite:file:test?mode=memory&cache=shared", doSetup: Boolean = true) {
     private val database: Database
 
     init {
