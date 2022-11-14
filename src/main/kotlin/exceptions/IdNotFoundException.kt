@@ -4,6 +4,6 @@ import com.github.ajalt.clikt.core.PrintMessage
 import kotlin.reflect.KType
 
 class IdNotFoundException(id: Int, type: KType) : PrintMessage(
-    message = "The ${type.toString().split('.').last()} ID $id cannot be found.",
+    message = "${type.toString().split('.').last().removePrefix("Todo")} with ID $id does not exist.",
     error = true
 )

@@ -7,14 +7,14 @@ import data.*
 import edu.uwaterloo.cs.todo.lib.TodoCategoryModel
 import edu.uwaterloo.cs.todo.lib.TodoItemModel
 import kotlinx.coroutines.runBlocking
-import sync.SyncService
+import sync.CloudService
 
-class SyncFromServer(private val dataFactory: DataFactory, private val syncService: SyncService?) :
+class SyncFromServer(private val dataFactory: DataFactory, private val cloudService: CloudService?) :
     CliktCommand("Synchronize all categories and items from the server to local.") {
     private val terminal = Terminal()
 
     override fun run() {
-        val syncResponse = runBlocking { syncService?.syncDatabase() }
+        val syncResponse = runBlocking { cloudService?.syncDatabase() }
         if (syncResponse === null)
             throw PrintMessage("Cannot sync with the synchronization service disabled.", error = true)
 

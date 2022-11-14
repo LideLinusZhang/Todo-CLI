@@ -6,28 +6,19 @@ import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addFileSource
 import commands.*
 import data.DataFactory
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.auth.*
-import io.ktor.client.plugins.auth.providers.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
-import sync.SyncService
-import sync.SyncServiceConfig
+import sync.CloudService
+import sync.CloudServiceConfig
 import java.io.File
 
 class Cli : NoOpCliktCommand()
 
-private const val configFileName: String = "config.json"
-
 fun main(args: Array<String>) {
-    val factory = DataFactory("jdbc:sqlite:./data.db")
+    val factory = DataFactory(databaseConnectionString)
     val configFile = File(configFileName)
-    val service: SyncService?
-    val shouldSync: Boolean
+    var shouldSync = false
 
-    if (configFile.exists()) {
-        val config: SyncServiceConfig = try {
+    val cloudService: CloudService? = if (configFile.exists()) {
+        val config: CloudServiceConfig = try {
             ConfigLoaderBuilder.default()
                 .addFileSource(configFile)
                 .build()
@@ -36,51 +27,23 @@ fun main(args: Array<String>) {
             throw InvalidFileFormat(configFileName, "Configuration corrupted.")
         }
 
-        if (config.enabled) {
-            val client = if (config.userCredential === null) {
-                shouldSync = false
-                HttpClient(CIO) { install(ContentNegotiation) { json() } }
-            } else {
-                shouldSync = true
-                HttpClient(CIO) {
-                    install(Auth) {
-                        digest {
-                            credentials {
-                                DigestAuthCredentials(
-                                    username = config.userCredential.userName,
-                                    password = config.userCredential.password
-                                )
-                            }
-                            realm = edu.uwaterloo.cs.todo.lib.realm
-                        }
-                    }
-                    install(ContentNegotiation) { json() }
-                }
-            }
+        shouldSync = (config.userCredential === null)
+        createCloudService(config)
+    } else null
 
-            service = SyncService(client, config.serverUrl!!)
-        } else {
-            shouldSync = false
-            service = null
-        }
-    } else {
-        shouldSync = false
-        service = null
-    }
-
-    val syncService = if (shouldSync) service else null
+    val serviceForSyncing = if (shouldSync) cloudService else null
 
     Cli().subcommands(
-        AddCategory(factory, syncService),
-        AddItem(factory, syncService),
-        DeleteCategory(factory, syncService),
-        DeleteItem(factory, syncService),
-        ModifyItem(factory, syncService),
-        ModifyCategory(factory, syncService),
+        AddCategory(factory, serviceForSyncing),
+        AddItem(factory, serviceForSyncing),
+        DeleteCategory(factory, serviceForSyncing),
+        DeleteItem(factory, serviceForSyncing),
+        ModifyItem(factory, serviceForSyncing),
+        ModifyCategory(factory, serviceForSyncing),
         ListCategories(factory),
         ListItems(factory),
-        SyncFromServer(factory, syncService),
-        SignUp(service),
+        SyncFromServer(factory, serviceForSyncing),
+        SignUp(cloudService),
         CompletionCommand()
     ).main(args)
 }

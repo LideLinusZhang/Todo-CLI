@@ -11,10 +11,10 @@ import data.TodoItem
 import exceptions.IdNotFoundException
 import getItemById
 import kotlinx.coroutines.runBlocking
-import sync.SyncService
+import sync.CloudService
 import kotlin.reflect.typeOf
 
-class DeleteItem(private val dataFactory: DataFactory, private val syncService: SyncService?) :
+class DeleteItem(private val dataFactory: DataFactory, private val cloudService: CloudService?) :
     CliktCommand("Delete a todo item.") {
     private val byUUID by option("--uuid", hidden = true).flag(default = false)
     private val itemId by argument(help = "ID of the todo item to be deleted.")
@@ -27,7 +27,7 @@ class DeleteItem(private val dataFactory: DataFactory, private val syncService: 
             if (item === null)
                 throw IdNotFoundException(itemId.toInt(), typeOf<TodoItem>())
 
-            val response = runBlocking { syncService?.deleteItem(item.uniqueId) }
+            val response = runBlocking { cloudService?.deleteItem(item.uniqueId) }
             if (response !== null && !response.successful)
                 throw PrintMessage("Deleting item failed: ${response.errorMessage}.", error = true)
 

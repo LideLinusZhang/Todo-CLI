@@ -7,7 +7,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import java.util.*
 
-class SyncService(private val client: HttpClient, url: String) {
+class CloudService(private val client: HttpClient, url: String) {
 
     private val categoryOperationURL = URLBuilder(url).appendPathSegments("category").build()
     private val itemOperationURL = URLBuilder(url).appendPathSegments("item").build()

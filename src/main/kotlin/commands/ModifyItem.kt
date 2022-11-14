@@ -10,6 +10,7 @@ import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
 import data.TodoItem
+import edu.uwaterloo.cs.todo.lib.ItemImportance
 import edu.uwaterloo.cs.todo.lib.TodoItemModificationModel
 import exceptions.IdNotFoundException
 import getItemById
@@ -18,12 +19,12 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import sync.SyncService
+import sync.CloudService
 import kotlin.reflect.typeOf
 
 private const val deadlineRemover: String = "none"
 
-class ModifyItem(private val dataFactory: DataFactory, private val syncService: SyncService?) :
+class ModifyItem(private val dataFactory: DataFactory, private val cloudService: CloudService?) :
     CliktCommand("Modify a todo item.") {
     private val byUUID by option("--uuid", hidden = true).flag(default = false)
     private val itemId by argument(help = "ID of the todo item.")
@@ -35,7 +36,13 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
         "deadline",
         ignoreCase = true
     ).required()
-    private val value by argument(help = "To remove deadline, enter \"$deadlineRemover\".")
+    private val value by argument(
+        help = "Value that the field will be modified to be.\u0085" +
+                "For favoured, it should be either true or false.\u0085" +
+                "For importance, it should be in ${ItemImportance.values().map { it.name }}.\u0085"+
+                "For deadline, the value should be in the format of YYYY-MM-DD. " +
+                "To remove deadline, enter \"$deadlineRemover\"."
+    )
     private val terminal = Terminal()
 
     override fun run() {
@@ -128,7 +135,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
                     }
                 }
 
-            val response = runBlocking { syncService?.modifyItem(item.uniqueId, modificationModel) }
+            val response = runBlocking { cloudService?.modifyItem(item.uniqueId, modificationModel) }
             if (response !== null && !response.successful)
                 throw PrintMessage("Modifying item failed: ${response.errorMessage}.", error = true)
 

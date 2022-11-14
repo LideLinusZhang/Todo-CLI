@@ -11,9 +11,9 @@ import data.TodoCategories
 import data.TodoCategory
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.select
-import sync.SyncService
+import sync.CloudService
 
-class AddCategory(private val dataFactory: DataFactory, private val syncService: SyncService?) :
+class AddCategory(private val dataFactory: DataFactory, private val cloudService: CloudService?) :
     CliktCommand("Add a todo category.") {
     private val categoryName by argument(help = "Name of the category to be added.")
     private val isFavoured by option(
@@ -32,7 +32,7 @@ class AddCategory(private val dataFactory: DataFactory, private val syncService:
                 favoured = isFavoured
             }
 
-            val response = runBlocking { syncService?.addCategory(newCategory.toModel()) }
+            val response = runBlocking { cloudService?.addCategory(newCategory.toModel()) }
             if (response !== null && !response.successful) {
                 newCategory.delete()
                 throw PrintMessage("Adding category failed: ${response.errorMessage}.", error = true)

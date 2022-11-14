@@ -17,10 +17,10 @@ import data.TodoItem
 import edu.uwaterloo.cs.todo.lib.ItemImportance
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
-import sync.SyncService
+import sync.CloudService
 import java.util.*
 
-class AddItem(private val dataFactory: DataFactory, private val syncService: SyncService?) :
+class AddItem(private val dataFactory: DataFactory, private val cloudService: CloudService?) :
     CliktCommand(help = "Add a todo item to a pre-existing category.") {
     private val itemImportance by option("--importance")
         .choice(ItemImportance.values().associateBy { it.name })
@@ -73,7 +73,7 @@ class AddItem(private val dataFactory: DataFactory, private val syncService: Syn
                 categoryId = targetCategory.uniqueId
             }
 
-            val response = runBlocking { syncService?.addItem(targetCategory.uniqueId, newItem.toModel()) }
+            val response = runBlocking { cloudService?.addItem(targetCategory.uniqueId, newItem.toModel()) }
             if (response !== null && !response.successful) {
                 newItem.delete()
                 throw PrintMessage("Adding item failed: ${response.errorMessage}.", error = true)

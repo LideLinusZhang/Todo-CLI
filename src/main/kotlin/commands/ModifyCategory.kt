@@ -17,10 +17,10 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import sync.SyncService
+import sync.CloudService
 import kotlin.reflect.typeOf
 
-class ModifyCategory(private val dataFactory: DataFactory, private val syncService: SyncService?) :
+class ModifyCategory(private val dataFactory: DataFactory, private val cloudService: CloudService?) :
     CliktCommand("Modify a todo category.") {
     private val byUUID by option("--uuid", hidden = true).flag(default = false)
     private val categoryId by argument(help = "ID of the todo category.")
@@ -56,7 +56,7 @@ class ModifyCategory(private val dataFactory: DataFactory, private val syncServi
                     }
                 }
 
-            val response = runBlocking { syncService?.modifyCategory(category.uniqueId, modificationModel) }
+            val response = runBlocking { cloudService?.modifyCategory(category.uniqueId, modificationModel) }
             if (response !== null && !response.successful)
                 throw PrintMessage("Modifying category failed: ${response.errorMessage}.", error = true)
 
