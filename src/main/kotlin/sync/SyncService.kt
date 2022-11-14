@@ -14,8 +14,8 @@ class SyncService(private val client: HttpClient, url: String) {
     private val userOperationURL = URLBuilder(url).appendPathSegments("user").build()
 
     companion object {
-        private fun createResponse(successful: Boolean, httpResponseBody: String): ServiceResponse {
-            return ServiceResponse(successful, if (!successful) httpResponseBody else null)
+        private fun createResponse(successful: Boolean, httpResponseBody: String): ServiceResult {
+            return ServiceResult(successful, if (!successful) httpResponseBody else null)
         }
     }
 
@@ -23,20 +23,30 @@ class SyncService(private val client: HttpClient, url: String) {
         client.close()
     }
 
-    suspend fun syncDatabase(): Pair<List<TodoCategoryModel>, List<TodoItemModel>> {
-        val categoriesOnServer = client.get(categoryOperationURL).body<List<TodoCategoryModel>>()
+    suspend fun syncDatabase(): Triple<ServiceResult, List<TodoCategoryModel>?, List<TodoItemModel>?> {
+        val categoryResponse = client.get(categoryOperationURL)
+
+        if (!categoryResponse.status.isSuccess())
+            return Triple(ServiceResult(false, categoryResponse.body<String>()), null, null)
+
+        val categoriesOnServer = categoryResponse.body<List<TodoCategoryModel>>()
         val itemsOnServer = mutableListOf<TodoItemModel>()
 
         for (categoryModel: TodoCategoryModel in categoriesOnServer) {
-            itemsOnServer.addAll(client.get(itemOperationURL) {
+            val itemResponse = client.get(itemOperationURL) {
                 parameter("categoryUniqueId", categoryModel.uniqueId)
-            }.body<List<TodoItemModel>>())
+            }
+
+            if (!categoryResponse.status.isSuccess())
+                return Triple(ServiceResult(false, itemResponse.body<String>()), null, null)
+
+            itemsOnServer.addAll(itemResponse.body<List<TodoItemModel>>())
         }
 
-        return Pair(categoriesOnServer, itemsOnServer)
+        return Triple(ServiceResult(true, null), categoriesOnServer, itemsOnServer)
     }
 
-    suspend fun addItem(categoryId: UUID, item: TodoItemModel): ServiceResponse {
+    suspend fun addItem(categoryId: UUID, item: TodoItemModel): ServiceResult {
         val response = client.post(itemOperationURL) {
             parameter("categoryUniqueId", categoryId)
             contentType(ContentType.Application.Json)
@@ -46,7 +56,7 @@ class SyncService(private val client: HttpClient, url: String) {
         return createResponse(response.status.isSuccess(), response.body())
     }
 
-    suspend fun addCategory(category: TodoCategoryModel): ServiceResponse {
+    suspend fun addCategory(category: TodoCategoryModel): ServiceResult {
         val response = client.post(categoryOperationURL) {
             contentType(ContentType.Application.Json)
             setBody(category)
@@ -55,7 +65,7 @@ class SyncService(private val client: HttpClient, url: String) {
         return createResponse(response.status.isSuccess(), response.body())
     }
 
-    suspend fun deleteItem(itemId: UUID): ServiceResponse {
+    suspend fun deleteItem(itemId: UUID): ServiceResult {
         val response = client.delete(itemOperationURL) {
             parameter("id", itemId)
         }
@@ -63,7 +73,7 @@ class SyncService(private val client: HttpClient, url: String) {
         return createResponse(response.status.isSuccess(), response.body())
     }
 
-    suspend fun deleteCategory(categoryId: UUID): ServiceResponse {
+    suspend fun deleteCategory(categoryId: UUID): ServiceResult {
         val response = client.delete(categoryOperationURL) {
             parameter("id", categoryId)
         }
@@ -71,7 +81,7 @@ class SyncService(private val client: HttpClient, url: String) {
         return createResponse(response.status.isSuccess(), response.body())
     }
 
-    suspend fun modifyItem(itemId: UUID, modification: TodoItemModificationModel): ServiceResponse {
+    suspend fun modifyItem(itemId: UUID, modification: TodoItemModificationModel): ServiceResult {
         val response = client.post(itemOperationURL) {
             parameter("id", itemId)
             setBody(modification)
@@ -80,7 +90,7 @@ class SyncService(private val client: HttpClient, url: String) {
         return createResponse(response.status.isSuccess(), response.body())
     }
 
-    suspend fun modifyCategory(categoryId: UUID, modification: TodoCategoryModificationModel): ServiceResponse {
+    suspend fun modifyCategory(categoryId: UUID, modification: TodoCategoryModificationModel): ServiceResult {
         val response = client.post(categoryOperationURL) {
             parameter("id", categoryId)
             setBody(modification)
@@ -89,7 +99,7 @@ class SyncService(private val client: HttpClient, url: String) {
         return createResponse(response.status.isSuccess(), response.body())
     }
 
-    suspend fun signUp(userName: String, hashedPassword: ByteArray): ServiceResponse {
+    suspend fun signUp(userName: String, hashedPassword: ByteArray): ServiceResult {
         val signUpURL = URLBuilder(userOperationURL).appendPathSegments("signup").build()
 
         val response = client.post(signUpURL) {

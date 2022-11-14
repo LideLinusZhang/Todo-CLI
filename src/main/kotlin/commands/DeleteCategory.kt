@@ -1,12 +1,14 @@
 package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.mordant.terminal.Terminal
-import data.*
+import data.DataFactory
+import data.TodoCategories
+import data.TodoCategory
 import exceptions.IdNotFoundException
 import kotlinx.coroutines.runBlocking
 import sync.SyncService
@@ -30,7 +32,7 @@ class DeleteCategory(private val dataFactory: DataFactory, private val syncServi
 
             val response = runBlocking { syncService?.deleteCategory(category.uniqueId) }
             if (response !== null && !response.successful) {
-                throw UsageError("Deleting category failed: ${response.errorMessage}.")
+                throw PrintMessage("Deleting category failed: ${response.errorMessage}.", error = true)
             }
 
             category.delete()

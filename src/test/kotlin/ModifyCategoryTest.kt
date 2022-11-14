@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
 
-internal class ModifyCategoryTest: CommandTest() {
+internal class ModifyCategoryTest : CommandTest() {
     @Test
     fun nonExistCategory_ThrowIdNotFoundException() {
         // Arrange

@@ -1,6 +1,7 @@
 package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.mordant.rendering.TextAlign
@@ -24,10 +25,8 @@ class ListCategories(private val dataFactory: DataFactory) : CliktCommand("Displ
     }
 
     private fun outputTable(categories: SizedIterable<TodoCategory>) {
-        if (categories.empty()) {
-            terminal.println("There is no category.")
-            return
-        }
+        if (categories.empty())
+            throw PrintMessage("There is no category.", error = false)
 
         terminal.println(table {
             tableBorders = Borders.NONE

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
 
-internal class ModifyItemTest: CommandTest() {
+internal class ModifyItemTest : CommandTest() {
 
     @Test
     fun nonExistItem_ThrowIdNotFoundException() {
@@ -21,7 +21,7 @@ internal class ModifyItemTest: CommandTest() {
         }
 
         //Act & Assert
-        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1", "--field" , "name", "a2")) }
+        assertThrowsExactly(IdNotFoundException::class.java) { command.parse(arrayOf("1", "--field", "name", "a2")) }
     }
 
     @Test
@@ -43,7 +43,7 @@ internal class ModifyItemTest: CommandTest() {
             }
 
             //Act & Assert
-            assertDoesNotThrow {  command.parse(arrayOf("1", "--field" , "name", "a2")) }
+            assertDoesNotThrow { command.parse(arrayOf("1", "--field", "name", "a2")) }
         }
     }
 }

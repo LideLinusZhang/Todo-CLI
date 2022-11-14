@@ -1,6 +1,7 @@
 package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -33,10 +34,8 @@ class ListItems(private val dataFactory: DataFactory) :
     }
 
     private fun outputTable(items: SizedIterable<TodoItem>) {
-        if (items.empty()) {
-            terminal.println("There is no item.")
-            return
-        }
+        if (items.empty())
+            throw PrintMessage("There is no item under the given category.", error = true)
 
         terminal.println(table {
             tableBorders = Borders.NONE

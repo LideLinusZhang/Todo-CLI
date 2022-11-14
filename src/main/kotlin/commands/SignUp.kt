@@ -1,7 +1,7 @@
 package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.mordant.terminal.Terminal
 import edu.uwaterloo.cs.todo.lib.getHashedPassword
 import kotlinx.coroutines.runBlocking
@@ -11,8 +11,11 @@ class SignUp(private val syncService: SyncService?) : CliktCommand("Create an ac
     private val terminal = Terminal()
 
     override fun run() {
-        if(syncService === null)
-            throw UsageError("Cannot connect to the Internet for sign up with synchronization service disabled.")
+        if (syncService === null)
+            throw PrintMessage(
+                "Cannot connect to the Internet for sign up with synchronization service disabled.",
+                error = true
+            )
 
         val userName = prompt("Username")!!
         val password = prompt("Password", hideInput = true, requireConfirmation = true)!!
@@ -20,7 +23,7 @@ class SignUp(private val syncService: SyncService?) : CliktCommand("Create an ac
         val response = runBlocking { syncService.signUp(userName, getHashedPassword(userName, password)) }
 
         if (!response.successful)
-            throw UsageError("Registration of new account failed: ${response.errorMessage}")
+            throw PrintMessage("Registration of new account failed: ${response.errorMessage}", error = true)
         else terminal.println("Registration successful.")
     }
 }

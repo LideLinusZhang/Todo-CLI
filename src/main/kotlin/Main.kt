@@ -1,6 +1,6 @@
 import com.github.ajalt.clikt.completion.CompletionCommand
+import com.github.ajalt.clikt.core.InvalidFileFormat
 import com.github.ajalt.clikt.core.NoOpCliktCommand
-import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.core.subcommands
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addFileSource
@@ -18,9 +18,11 @@ import java.io.File
 
 class Cli : NoOpCliktCommand()
 
+private const val configFileName: String = "config.json"
+
 fun main(args: Array<String>) {
     val factory = DataFactory("jdbc:sqlite:./data.db")
-    val configFile = File("config.json")
+    val configFile = File(configFileName)
     val service: SyncService?
     val shouldSync: Boolean
 
@@ -31,7 +33,7 @@ fun main(args: Array<String>) {
                 .build()
                 .loadConfigOrThrow()
         } catch (_: Exception) {
-            throw UsageError("Configuration corrupted.")
+            throw InvalidFileFormat(configFileName, "Configuration corrupted.")
         }
 
         if (config.enabled) {
@@ -66,9 +68,7 @@ fun main(args: Array<String>) {
         service = null
     }
 
-    val syncService = if(shouldSync) service else null
-    if (syncService !== null)
-        syncFromServer(factory, syncService)
+    val syncService = if (shouldSync) service else null
 
     Cli().subcommands(
         AddCategory(factory, syncService),
@@ -79,6 +79,7 @@ fun main(args: Array<String>) {
         ModifyCategory(factory, syncService),
         ListCategories(factory),
         ListItems(factory),
+        SyncFromServer(factory, syncService),
         SignUp(service),
         CompletionCommand()
     ).main(args)

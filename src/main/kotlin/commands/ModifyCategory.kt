@@ -1,7 +1,7 @@
 package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -58,7 +58,7 @@ class ModifyCategory(private val dataFactory: DataFactory, private val syncServi
 
             val response = runBlocking { syncService?.modifyCategory(category.uniqueId, modificationModel) }
             if (response !== null && !response.successful)
-                throw UsageError("Modifying category failed: ${response.errorMessage}.")
+                throw PrintMessage("Modifying category failed: ${response.errorMessage}.", error = true)
 
             modification.invoke()
 

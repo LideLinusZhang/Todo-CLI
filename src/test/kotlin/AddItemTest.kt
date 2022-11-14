@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
 
-internal class AddItemTest: CommandTest() {
+internal class AddItemTest : CommandTest() {
     @Test
     fun addItem_Successful() {
         // Arrange

@@ -1,7 +1,7 @@
 package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -130,7 +130,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val syncService: 
 
             val response = runBlocking { syncService?.modifyItem(item.uniqueId, modificationModel) }
             if (response !== null && !response.successful)
-                throw UsageError("Modifying item failed: ${response.errorMessage}.")
+                throw PrintMessage("Modifying item failed: ${response.errorMessage}.", error = true)
 
             modification.invoke()
 

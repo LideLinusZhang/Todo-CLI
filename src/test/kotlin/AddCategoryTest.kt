@@ -5,7 +5,7 @@ import data.TodoCategory
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-internal class AddCategoryTest: CommandTest() {
+internal class AddCategoryTest : CommandTest() {
     @Test
     fun addCategory_AllFieldsMatchInput() {
         // Arrange

@@ -3,7 +3,7 @@ import data.TodoCategory
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Test
 
-internal class ListCategoryTest: CommandTest() {
+internal class ListCategoryTest : CommandTest() {
     @Test
     fun listSuccess_ShowAllCategory() {
         // Arrange
@@ -14,7 +14,7 @@ internal class ListCategoryTest: CommandTest() {
                 name = "Physics"
                 favoured = true
             }
-            assertDoesNotThrow { command.parse(arrayOf())}
+            assertDoesNotThrow { command.parse(arrayOf()) }
         }
     }
 }

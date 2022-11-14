@@ -4,7 +4,7 @@ import exceptions.IdNotFoundException
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-internal class DeleteCategoryTest: CommandTest() {
+internal class DeleteCategoryTest : CommandTest() {
     @Test
     fun nonExistCategory_ThrowIdNotFoundException() {
         // Arrange

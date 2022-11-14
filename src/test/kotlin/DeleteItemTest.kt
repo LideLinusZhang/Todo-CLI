@@ -6,7 +6,7 @@ import exceptions.IdNotFoundException
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-internal class DeleteItemTest: CommandTest() {
+internal class DeleteItemTest : CommandTest() {
 
     @Test
     fun nonExistItemNumber_ThrowIdNotFoundException() {

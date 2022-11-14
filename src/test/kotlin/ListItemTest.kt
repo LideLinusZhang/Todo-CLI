@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertThrowsExactly
 import org.junit.jupiter.api.Test
 
-internal class ListItemTest: CommandTest() {
+internal class ListItemTest : CommandTest() {
 
     @Test
     fun nonExistAccordingList_ThrowIdNotFoundException() {
@@ -44,7 +44,7 @@ internal class ListItemTest: CommandTest() {
                 favoured = false
                 description = String()
             }
-            assertDoesNotThrow { command.parse(arrayOf(("1")))}
+            assertDoesNotThrow { command.parse(arrayOf(("1"))) }
         }
     }
 }

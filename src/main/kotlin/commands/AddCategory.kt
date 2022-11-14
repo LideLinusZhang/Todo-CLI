@@ -1,7 +1,7 @@
 package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -25,7 +25,7 @@ class AddCategory(private val dataFactory: DataFactory, private val syncService:
     override fun run() {
         dataFactory.transaction {
             if (!TodoCategories.select { TodoCategories.name eq categoryName }.empty())
-                throw UsageError(text = "Category with the same name already exists.") // Name must be unique
+                throw PrintMessage("Category with the same name already exists.", error = true) // Name must be unique
 
             val newCategory = TodoCategory.new {
                 name = categoryName
@@ -35,7 +35,7 @@ class AddCategory(private val dataFactory: DataFactory, private val syncService:
             val response = runBlocking { syncService?.addCategory(newCategory.toModel()) }
             if (response !== null && !response.successful) {
                 newCategory.delete()
-                throw UsageError("Adding category failed: ${response.errorMessage}.")
+                throw PrintMessage("Adding category failed: ${response.errorMessage}.", error = true)
             }
 
             terminal.println("Category added successfully.")

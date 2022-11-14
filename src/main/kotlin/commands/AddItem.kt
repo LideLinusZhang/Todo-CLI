@@ -1,7 +1,7 @@
 package commands
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.options.convert
@@ -59,10 +59,10 @@ class AddItem(private val dataFactory: DataFactory, private val syncService: Syn
             }
 
             if (targetCategory === null)
-                throw UsageError(text = "The target category doesn't exist.")
+                throw PrintMessage("The target category does not exist.", error = true)
 
             if (targetCategory.items.any { it.name == itemName })
-                throw UsageError(text = "An item with the same name already exists under the given category.")
+                throw PrintMessage("An item with the same name already exists under the given category.", error = true)
 
             val newItem = TodoItem.new {
                 name = itemName
@@ -76,7 +76,7 @@ class AddItem(private val dataFactory: DataFactory, private val syncService: Syn
             val response = runBlocking { syncService?.addItem(targetCategory.uniqueId, newItem.toModel()) }
             if (response !== null && !response.successful) {
                 newItem.delete()
-                throw UsageError("Adding item failed: ${response.errorMessage}.")
+                throw PrintMessage("Adding item failed: ${response.errorMessage}.", error = true)
             }
 
             terminal.println("Item added successfully.")
