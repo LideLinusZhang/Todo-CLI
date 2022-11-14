@@ -1,4 +1,4 @@
-import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.core.PrintMessage
 import commands.AddItem
 import data.TodoCategory
 import data.TodoItem
@@ -44,6 +44,6 @@ internal class AddItemTest : CommandTest() {
         }
 
         //Act & Assert
-        assertThrowsExactly(UsageError::class.java) { command.parse(arrayOf("--search-category-by", "id", "1", "A1")) }
+        assertThrowsExactly(PrintMessage::class.java) { command.parse(arrayOf("--search-category-by", "id", "1", "A1")) }
     }
 }

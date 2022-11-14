@@ -2,6 +2,7 @@ import data.TodoCategories
 import data.TodoCategory
 import data.TodoItem
 import data.TodoItems
+import edu.uwaterloo.cs.todo.lib.CloudServiceConfig
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.auth.*
@@ -9,11 +10,9 @@ import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import sync.CloudService
-import sync.CloudServiceConfig
 import java.util.*
 
 const val databaseFileName: String = "data.db"
-const val configFileName: String = "config.json"
 const val databaseConnectionString = "jdbc:sqlite:./$databaseFileName"
 
 fun createCloudService(config: CloudServiceConfig): CloudService? {
@@ -28,8 +27,8 @@ fun createCloudService(config: CloudServiceConfig): CloudService? {
                         realm = edu.uwaterloo.cs.todo.lib.realm
                         credentials {
                             DigestAuthCredentials(
-                                username = config.userCredential.userName,
-                                password = config.userCredential.password
+                                username = config.userCredential!!.userName,
+                                password = config.userCredential!!.password
                             )
                         }
                     }

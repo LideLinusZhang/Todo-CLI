@@ -1,4 +1,4 @@
-import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.core.PrintMessage
 import commands.AddCategory
 import data.TodoCategories
 import data.TodoCategory
@@ -33,6 +33,6 @@ internal class AddCategoryTest : CommandTest() {
 
         //Act & Assert
         assertDoesNotThrow { command.parse(arrayOf("Maths")) }
-        assertThrowsExactly(UsageError::class.java) { command.parse(arrayOf("Maths", "--favoured")) }
+        assertThrowsExactly(PrintMessage::class.java) { command.parse(arrayOf("Maths", "--favoured")) }
     }
 }

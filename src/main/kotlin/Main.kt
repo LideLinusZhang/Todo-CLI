@@ -1,13 +1,10 @@
 import com.github.ajalt.clikt.completion.CompletionCommand
-import com.github.ajalt.clikt.core.InvalidFileFormat
 import com.github.ajalt.clikt.core.NoOpCliktCommand
+import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.clikt.core.subcommands
-import com.sksamuel.hoplite.ConfigLoaderBuilder
-import com.sksamuel.hoplite.addFileSource
 import commands.*
 import data.DataFactory
-import sync.CloudService
-import sync.CloudServiceConfig
+import edu.uwaterloo.cs.todo.lib.readConfigFile
 import java.io.File
 
 class Cli : NoOpCliktCommand(name = "todo-cli")
@@ -15,20 +12,15 @@ class Cli : NoOpCliktCommand(name = "todo-cli")
 fun main(args: Array<String>) {
     val dbFile = File(databaseFileName)
     val factory = DataFactory(databaseConnectionString, doSetup = !dbFile.exists())
+    val readResult = readConfigFile()
 
-    val configFile = File(configFileName)
+    if (!readResult.first)
+        throw PrintMessage("Cannot read configuration file. The file is either locked or corrupted.", error = true)
+
+    val config = readResult.second
     var shouldSync = false
 
-    val cloudService: CloudService? = if (configFile.exists()) {
-        val config: CloudServiceConfig = try {
-            ConfigLoaderBuilder.default()
-                .addFileSource(configFile)
-                .build()
-                .loadConfigOrThrow()
-        } catch (_: Exception) {
-            throw InvalidFileFormat(configFileName, "Configuration corrupted.")
-        }
-
+    val cloudService = if (config!==null) {
         shouldSync = (config.userCredential === null)
         createCloudService(config)
     } else null
