@@ -20,8 +20,8 @@ fun main(args: Array<String>) {
     val config = readResult.second
     var shouldSync = false
 
-    val cloudService = if (config!==null) {
-        shouldSync = (config.userCredential === null)
+    val cloudService = if (config !== null) {
+        shouldSync = (config.userCredential !== null)
         createCloudService(config)
     } else null
 
