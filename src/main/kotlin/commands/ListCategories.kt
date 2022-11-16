@@ -30,7 +30,7 @@ class ListCategories(private val dataFactory: DataFactory) : CliktCommand("Displ
 
         terminal.println(table {
             tableBorders = Borders.NONE
-            header { style(bold = true); row("ID", "Name", "Favoured?") }
+            header { style(bold = true); row("ID", "Name", "Favr?") }
             body {
                 cellBorders = Borders.LEFT_RIGHT
                 categories.forEach {
@@ -46,7 +46,7 @@ class ListCategories(private val dataFactory: DataFactory) : CliktCommand("Displ
             }
             column(0) { width = ColumnWidth.Fixed(5); align = TextAlign.CENTER }
             column(1) { width = ColumnWidth.Expand() }
-            column(2) { width = ColumnWidth.Fixed(15); align = TextAlign.CENTER }
+            column(2) { width = ColumnWidth.Fixed(5); align = TextAlign.CENTER }
         })
     }
 

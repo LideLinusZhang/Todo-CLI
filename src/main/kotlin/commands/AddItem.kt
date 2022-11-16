@@ -26,6 +26,7 @@ class AddItem(private val dataFactory: DataFactory, private val cloudService: Cl
         .choice(ItemImportance.values().associateBy { it.name })
     private val itemDeadline by option(
         "--deadline",
+        metavar = "YYYY-MM-DD",
         help = "Deadline of the item, in the format of YYYY-MM-DD."
     )
         .convert { LocalDate.parse(it) }
