@@ -39,7 +39,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
     private val value by argument(
         help = "Value that the field will be modified to be.\u0085" +
                 "For favoured, it should be either true or false.\u0085" +
-                "For importance, it should be in ${ItemImportance.values().map { it.name }}.\u0085"+
+                "For importance, it should be in ${ItemImportance.values().map { it.name }}.\u0085" +
                 "For deadline, the value should be in the format of YYYY-MM-DD. " +
                 "To remove deadline, enter \"$deadlineRemover\"."
     )

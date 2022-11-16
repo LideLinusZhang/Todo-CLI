@@ -57,6 +57,7 @@ class ListItems(private val dataFactory: DataFactory) :
             header {
                 style(bold = true)
                 row("ID", "Name", "Description", "Favr?", "Importance", "Deadline")
+                align = TextAlign.CENTER
             }
             body {
                 cellBorders = Borders.LEFT_RIGHT
@@ -74,12 +75,12 @@ class ListItems(private val dataFactory: DataFactory) :
                     }
                 }
             }
-            column(0) { width = ColumnWidth.Fixed(5); align = TextAlign.CENTER }
+            column(0) { width = ColumnWidth.Fixed(4); align = TextAlign.CENTER }
             column(1) { width = ColumnWidth.Expand(0.3) }
             column(2) { width = ColumnWidth.Expand(0.7) }
-            column(3) { width = ColumnWidth.Fixed(5); align = TextAlign.CENTER }
-            column(3) { width = ColumnWidth.Fixed(12); align = TextAlign.CENTER }
-            column(4) { width = ColumnWidth.Fixed(10); align = TextAlign.CENTER }
+            column(3) { width = ColumnWidth.Fixed(7); align = TextAlign.CENTER }
+            column(4) { width = ColumnWidth.Fixed(12); align = TextAlign.CENTER }
+            column(5) { width = ColumnWidth.Fixed(10); align = TextAlign.CENTER }
         })
     }
 

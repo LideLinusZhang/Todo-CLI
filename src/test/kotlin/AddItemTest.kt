@@ -44,6 +44,15 @@ internal class AddItemTest : CommandTest() {
         }
 
         //Act & Assert
-        assertThrowsExactly(PrintMessage::class.java) { command.parse(arrayOf("--search-category-by", "id", "1", "A1")) }
+        assertThrowsExactly(PrintMessage::class.java) {
+            command.parse(
+                arrayOf(
+                    "--search-category-by",
+                    "id",
+                    "1",
+                    "A1"
+                )
+            )
+        }
     }
 }
