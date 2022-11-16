@@ -83,6 +83,7 @@ class CloudService(private val client: HttpClient, url: String) {
 
     suspend fun modifyItem(itemId: UUID, modification: TodoItemModificationModel): ServiceResult {
         val response = client.post(itemOperationURL) {
+            contentType(ContentType.Application.Json)
             parameter("id", itemId)
             setBody(modification)
         }
@@ -92,6 +93,7 @@ class CloudService(private val client: HttpClient, url: String) {
 
     suspend fun modifyCategory(categoryId: UUID, modification: TodoCategoryModificationModel): ServiceResult {
         val response = client.post(categoryOperationURL) {
+            contentType(ContentType.Application.Json)
             parameter("id", categoryId)
             setBody(modification)
         }
