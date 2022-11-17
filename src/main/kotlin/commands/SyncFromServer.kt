@@ -58,6 +58,7 @@ class SyncFromServer(private val dataFactory: DataFactory, private val cloudServ
                 } else if (item === null) {
                     TodoItem.new {
                         name = itemModel.name
+                        uniqueId = itemModel.uniqueId
                         description = itemModel.description
                         favoured = itemModel.favoured
                         importance = itemModel.importance

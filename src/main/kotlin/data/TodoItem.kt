@@ -13,7 +13,7 @@ import java.util.*
 class TodoItem(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<TodoItem>(TodoItems)
 
-    val uniqueId by TodoItems.uniqueId.clientDefault { UUID.randomUUID() }
+    var uniqueId by TodoItems.uniqueId.clientDefault { UUID.randomUUID() }
     var categoryId by TodoItems.categoryId
     var name by TodoItems.name
     var description by TodoItems.description
