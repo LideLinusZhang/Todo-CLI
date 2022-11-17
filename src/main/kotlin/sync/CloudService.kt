@@ -18,8 +18,11 @@ class CloudService(private val client: HttpClient, url: String) {
     private val addURLSegment = "add"
 
     companion object {
-        private fun createResponse(successful: Boolean, httpResponseBody: String): ServiceResult {
-            return ServiceResult(successful, if (!successful) httpResponseBody else null)
+        private fun createResponse(status: HttpStatusCode, httpResponseBody: String): ServiceResult {
+            val isSuccess = status.isSuccess()
+            val errorMessage: String? = if (isSuccess) null else if (httpResponseBody.isEmpty()) status.description else httpResponseBody
+
+            return ServiceResult(isSuccess, errorMessage)
         }
     }
 
@@ -57,7 +60,7 @@ class CloudService(private val client: HttpClient, url: String) {
             setBody(item)
         }
 
-        return createResponse(response.status.isSuccess(), response.body())
+        return createResponse(response.status, response.body())
     }
 
     suspend fun addCategory(category: TodoCategoryModel): ServiceResult {
@@ -66,7 +69,7 @@ class CloudService(private val client: HttpClient, url: String) {
             setBody(category)
         }
 
-        return createResponse(response.status.isSuccess(), response.body())
+        return createResponse(response.status, response.body())
     }
 
     suspend fun deleteItem(itemId: UUID): ServiceResult {
@@ -74,7 +77,7 @@ class CloudService(private val client: HttpClient, url: String) {
             parameter("id", itemId)
         }
 
-        return createResponse(response.status.isSuccess(), response.body())
+        return createResponse(response.status, response.body())
     }
 
     suspend fun deleteCategory(categoryId: UUID): ServiceResult {
@@ -82,7 +85,7 @@ class CloudService(private val client: HttpClient, url: String) {
             parameter("id", categoryId)
         }
 
-        return createResponse(response.status.isSuccess(), response.body())
+        return createResponse(response.status, response.body())
     }
 
     suspend fun modifyItem(itemId: UUID, modification: TodoItemModificationModel): ServiceResult {
@@ -92,7 +95,7 @@ class CloudService(private val client: HttpClient, url: String) {
             setBody(modification)
         }
 
-        return createResponse(response.status.isSuccess(), response.body())
+        return createResponse(response.status, response.body())
     }
 
     suspend fun modifyCategory(categoryId: UUID, modification: TodoCategoryModificationModel): ServiceResult {
@@ -102,7 +105,7 @@ class CloudService(private val client: HttpClient, url: String) {
             setBody(modification)
         }
 
-        return createResponse(response.status.isSuccess(), response.body())
+        return createResponse(response.status, response.body())
     }
 
     suspend fun signUp(userName: String, hashedPassword: ByteArray): ServiceResult {
@@ -113,6 +116,6 @@ class CloudService(private val client: HttpClient, url: String) {
             setBody(UserModel(userName, hashedPassword))
         }
 
-        return createResponse(response.status.isSuccess(), response.body())
+        return createResponse(response.status, response.body())
     }
 }

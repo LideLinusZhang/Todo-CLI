@@ -42,11 +42,12 @@ class ModifyCategory(private val dataFactory: DataFactory, private val cloudServ
                 when (field) {
                     "name" -> {
                         modification = { category.name = value }
-                        TodoCategoryModificationModel(category.name, null, category.modifiedTime)
+                        TodoCategoryModificationModel(value, null, category.modifiedTime)
                     }
 
-                    "description" -> {
-                        modification = { category.favoured = value.toBoolean() }
+                    "favoured" -> {
+                        val modifiedTo = value.toBoolean()
+                        modification = { category.favoured = modifiedTo }
                         TodoCategoryModificationModel(null, category.favoured, category.modifiedTime)
                     }
 
