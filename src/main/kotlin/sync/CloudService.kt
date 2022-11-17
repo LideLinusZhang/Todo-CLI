@@ -9,9 +9,13 @@ import java.util.*
 
 class CloudService(private val client: HttpClient, url: String) {
 
-    private val categoryOperationURL = URLBuilder(url).appendPathSegments("category").build()
-    private val itemOperationURL = URLBuilder(url).appendPathSegments("item").build()
-    private val userOperationURL = URLBuilder(url).appendPathSegments("user").build()
+    private val categoryOperationURL = URLBuilder(url).appendPathSegments("category")
+    private val itemOperationURL = URLBuilder(url).appendPathSegments("item")
+    private val userOperationURL = URLBuilder(url).appendPathSegments("user")
+
+    private val deleteURLSegment = "delete"
+    private val modifyURLSegment = "modify"
+    private val addURLSegment = "add"
 
     companion object {
         private fun createResponse(successful: Boolean, httpResponseBody: String): ServiceResult {
@@ -24,7 +28,7 @@ class CloudService(private val client: HttpClient, url: String) {
     }
 
     suspend fun syncDatabase(): Triple<ServiceResult, List<TodoCategoryModel>?, List<TodoItemModel>?> {
-        val categoryResponse = client.get(categoryOperationURL)
+        val categoryResponse = client.get(categoryOperationURL.build())
 
         if (!categoryResponse.status.isSuccess())
             return Triple(ServiceResult(false, categoryResponse.body<String>()), null, null)
@@ -33,7 +37,7 @@ class CloudService(private val client: HttpClient, url: String) {
         val itemsOnServer = mutableListOf<TodoItemModel>()
 
         for (categoryModel: TodoCategoryModel in categoriesOnServer) {
-            val itemResponse = client.get(itemOperationURL) {
+            val itemResponse = client.get(itemOperationURL.build()) {
                 parameter("categoryUniqueId", categoryModel.uniqueId)
             }
 
@@ -47,7 +51,7 @@ class CloudService(private val client: HttpClient, url: String) {
     }
 
     suspend fun addItem(categoryId: UUID, item: TodoItemModel): ServiceResult {
-        val response = client.post(itemOperationURL) {
+        val response = client.post(itemOperationURL.appendPathSegments(addURLSegment).build()) {
             parameter("categoryUniqueId", categoryId)
             contentType(ContentType.Application.Json)
             setBody(item)
@@ -57,7 +61,7 @@ class CloudService(private val client: HttpClient, url: String) {
     }
 
     suspend fun addCategory(category: TodoCategoryModel): ServiceResult {
-        val response = client.post(categoryOperationURL) {
+        val response = client.post(categoryOperationURL.appendPathSegments(addURLSegment).build()) {
             contentType(ContentType.Application.Json)
             setBody(category)
         }
@@ -66,7 +70,7 @@ class CloudService(private val client: HttpClient, url: String) {
     }
 
     suspend fun deleteItem(itemId: UUID): ServiceResult {
-        val response = client.delete(itemOperationURL) {
+        val response = client.delete(itemOperationURL.appendPathSegments(deleteURLSegment).build()) {
             parameter("id", itemId)
         }
 
@@ -74,7 +78,7 @@ class CloudService(private val client: HttpClient, url: String) {
     }
 
     suspend fun deleteCategory(categoryId: UUID): ServiceResult {
-        val response = client.delete(categoryOperationURL) {
+        val response = client.delete(categoryOperationURL.appendPathSegments(deleteURLSegment).build()) {
             parameter("id", categoryId)
         }
 
@@ -82,7 +86,7 @@ class CloudService(private val client: HttpClient, url: String) {
     }
 
     suspend fun modifyItem(itemId: UUID, modification: TodoItemModificationModel): ServiceResult {
-        val response = client.post(itemOperationURL) {
+        val response = client.post(itemOperationURL.appendPathSegments(modifyURLSegment).build()) {
             contentType(ContentType.Application.Json)
             parameter("id", itemId)
             setBody(modification)
@@ -92,7 +96,7 @@ class CloudService(private val client: HttpClient, url: String) {
     }
 
     suspend fun modifyCategory(categoryId: UUID, modification: TodoCategoryModificationModel): ServiceResult {
-        val response = client.post(categoryOperationURL) {
+        val response = client.post(categoryOperationURL.appendPathSegments(modifyURLSegment).build()) {
             contentType(ContentType.Application.Json)
             parameter("id", categoryId)
             setBody(modification)

@@ -62,10 +62,6 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                         modification = { item.name = value }
                         TodoItemModificationModel(
                             name = item.name,
-                            description = null,
-                            favoured = null,
-                            importance = null,
-                            deadline = null,
                             modifiedTime = item.modifiedTime
                         )
                     }
@@ -73,11 +69,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                     "description" -> {
                         modification = { item.description = value }
                         TodoItemModificationModel(
-                            name = null,
                             description = item.description,
-                            favoured = null,
-                            importance = null,
-                            deadline = null,
                             modifiedTime = item.modifiedTime
                         )
                     }
@@ -85,11 +77,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                     "favoured" -> {
                         modification = { item.favoured = value.toBoolean() }
                         TodoItemModificationModel(
-                            name = null,
-                            description = null,
                             favoured = item.favoured,
-                            importance = null,
-                            deadline = null,
                             modifiedTime = item.modifiedTime
                         )
                     }
@@ -97,11 +85,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                     "importance" -> {
                         modification = { item.importance = enumValueOf(value) }
                         TodoItemModificationModel(
-                            name = null,
-                            description = null,
-                            favoured = null,
                             importance = item.importance,
-                            deadline = null,
                             modifiedTime = item.modifiedTime
                         )
                     }
@@ -113,10 +97,6 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                             { item.deadline = LocalDate.parse(value) }
                         }
                         TodoItemModificationModel(
-                            name = null,
-                            description = null,
-                            favoured = null,
-                            importance = null,
                             deadline = item.deadline,
                             modifiedTime = item.modifiedTime
                         )
@@ -125,11 +105,6 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                     else -> {
                         modification = {}
                         TodoItemModificationModel(
-                            name = null,
-                            description = null,
-                            favoured = null,
-                            importance = null,
-                            deadline = null,
                             modifiedTime = item.modifiedTime
                         )
                     }

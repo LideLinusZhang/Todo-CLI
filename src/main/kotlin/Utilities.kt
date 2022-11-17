@@ -9,19 +9,22 @@ import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
 import sync.CloudService
 import java.util.*
 
 const val databaseFileName: String = "data.db"
 const val databaseConnectionString = "jdbc:sqlite:./$databaseFileName"
 
+@OptIn(ExperimentalSerializationApi::class)
 fun createCloudService(config: CloudServiceConfig): CloudService? {
     return if (config.enabled) {
         val client = if (config.userCredential === null) {
             HttpClient(CIO) { install(ContentNegotiation) { json() } }
         } else {
             HttpClient(CIO) {
-                install(ContentNegotiation) { json() }
+                install(ContentNegotiation) { json( Json { explicitNulls = false }) }
                 install(Auth) {
                     digest {
                         realm = edu.uwaterloo.cs.todo.lib.realm

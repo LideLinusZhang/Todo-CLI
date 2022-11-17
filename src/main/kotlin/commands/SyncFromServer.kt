@@ -51,6 +51,7 @@ class SyncFromServer(private val dataFactory: DataFactory, private val cloudServ
                 if (item !== null && item.modifiedTime < itemModel.modifiedTime) {
                     item.name = itemModel.name
                     item.description = itemModel.description
+                    item.favoured = itemModel.favoured
                     item.importance = itemModel.importance
                     item.deadline = itemModel.deadline
                     item.modifiedTime = itemModel.modifiedTime
@@ -58,6 +59,7 @@ class SyncFromServer(private val dataFactory: DataFactory, private val cloudServ
                     TodoItem.new {
                         name = itemModel.name
                         description = itemModel.description
+                        favoured = itemModel.favoured
                         importance = itemModel.importance
                         deadline = itemModel.deadline
                         categoryId = itemModel.categoryId
