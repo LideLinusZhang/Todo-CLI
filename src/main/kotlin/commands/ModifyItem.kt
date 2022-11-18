@@ -61,11 +61,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                     "name" -> {
                         modification = { item.name = value }
                         TodoItemModificationModel(
-                            name = item.name,
-                            description = null,
-                            favoured = null,
-                            importance = null,
-                            deadline = null,
+                            name = value,
                             modifiedTime = item.modifiedTime
                         )
                     }
@@ -73,51 +69,34 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                     "description" -> {
                         modification = { item.description = value }
                         TodoItemModificationModel(
-                            name = null,
-                            description = item.description,
-                            favoured = null,
-                            importance = null,
-                            deadline = null,
+                            description = value,
                             modifiedTime = item.modifiedTime
                         )
                     }
 
                     "favoured" -> {
-                        modification = { item.favoured = value.toBoolean() }
+                        val modifiedTo = value.toBoolean()
+                        modification = { item.favoured = modifiedTo }
                         TodoItemModificationModel(
-                            name = null,
-                            description = null,
-                            favoured = item.favoured,
-                            importance = null,
-                            deadline = null,
+                            favoured = modifiedTo,
                             modifiedTime = item.modifiedTime
                         )
                     }
 
                     "importance" -> {
-                        modification = { item.importance = enumValueOf(value) }
+                        val modifiedTo = enumValueOf<ItemImportance>(value)
+                        modification = { item.importance = modifiedTo }
                         TodoItemModificationModel(
-                            name = null,
-                            description = null,
-                            favoured = null,
-                            importance = item.importance,
-                            deadline = null,
+                            importance = modifiedTo,
                             modifiedTime = item.modifiedTime
                         )
                     }
 
                     "deadline" -> {
-                        modification = if (value.lowercase() == deadlineRemover) {
-                            { item.deadline = null }
-                        } else {
-                            { item.deadline = LocalDate.parse(value) }
-                        }
+                        val modifiedTo = if (value.lowercase() == deadlineRemover) null else LocalDate.parse(value)
+                        modification = { item.deadline = modifiedTo }
                         TodoItemModificationModel(
-                            name = null,
-                            description = null,
-                            favoured = null,
-                            importance = null,
-                            deadline = item.deadline,
+                            deadline = modifiedTo,
                             modifiedTime = item.modifiedTime
                         )
                     }
@@ -125,11 +104,6 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                     else -> {
                         modification = {}
                         TodoItemModificationModel(
-                            name = null,
-                            description = null,
-                            favoured = null,
-                            importance = null,
-                            deadline = null,
                             modifiedTime = item.modifiedTime
                         )
                     }
