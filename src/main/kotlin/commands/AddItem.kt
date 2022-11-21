@@ -74,7 +74,7 @@ class AddItem(private val dataFactory: DataFactory, private val cloudService: Cl
                 categoryId = targetCategory.uniqueId
             }
 
-            val response = runBlocking { cloudService?.addItem(targetCategory.uniqueId, newItem.toModel()) }
+            val response = runBlocking { cloudService?.addItem(newItem.toModel()) }
             if (response !== null && !response.successful) {
                 newItem.delete()
                 throw PrintMessage("Adding item failed: ${response.errorMessage}.", error = true)

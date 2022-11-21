@@ -34,7 +34,7 @@ class CloudService(private val client: HttpClient, url: String) {
         val categoryResponse = client.get(categoryOperationURL.build())
 
         if (!categoryResponse.status.isSuccess())
-            return Triple(ServiceResult(false, categoryResponse.body<String>()), null, null)
+            return Triple(createResponse(categoryResponse.status, categoryResponse.body()), null, null)
 
         val categoriesOnServer = categoryResponse.body<List<TodoCategoryModel>>()
         val itemsOnServer = mutableListOf<TodoItemModel>()
@@ -45,7 +45,7 @@ class CloudService(private val client: HttpClient, url: String) {
             }
 
             if (!categoryResponse.status.isSuccess())
-                return Triple(ServiceResult(false, itemResponse.body<String>()), null, null)
+                return Triple(createResponse(categoryResponse.status, categoryResponse.body()), null, null)
 
             itemsOnServer.addAll(itemResponse.body<List<TodoItemModel>>())
         }
@@ -53,9 +53,8 @@ class CloudService(private val client: HttpClient, url: String) {
         return Triple(ServiceResult(true, null), categoriesOnServer, itemsOnServer)
     }
 
-    suspend fun addItem(categoryId: UUID, item: TodoItemModel): ServiceResult {
+    suspend fun addItem(item: TodoItemModel): ServiceResult {
         val response = client.post(itemOperationURL.appendPathSegments(addURLSegment).build()) {
-            parameter("categoryUniqueId", categoryId)
             contentType(ContentType.Application.Json)
             setBody(item)
         }
