@@ -10,6 +10,7 @@ import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
 import data.TodoCategory
+import data.TodoCategoryFields
 import edu.uwaterloo.cs.todo.lib.TodoCategoryModificationModel
 import exceptions.IdNotFoundException
 import getCategoryById
@@ -24,7 +25,8 @@ class ModifyCategory(private val dataFactory: DataFactory, private val cloudServ
     CliktCommand("Modify a todo category.") {
     private val byUUID by option("--uuid", hidden = true).flag(default = false)
     private val categoryId by argument(help = "ID of the todo category.")
-    private val field by option().choice("name", "favoured", ignoreCase = true).required()
+    private val field by option().choice(TodoCategoryFields.values().dropWhile { it == TodoCategoryFields.Id }
+        .associateBy { it.name }, ignoreCase = true).required()
     private val value by argument()
     private val terminal = Terminal()
 
@@ -40,12 +42,12 @@ class ModifyCategory(private val dataFactory: DataFactory, private val cloudServ
 
             val modificationModel: TodoCategoryModificationModel =
                 when (field) {
-                    "name" -> {
+                    TodoCategoryFields.Name -> {
                         modification = { category.name = value }
                         TodoCategoryModificationModel(value, null, category.modifiedTime)
                     }
 
-                    "favoured" -> {
+                    TodoCategoryFields.Favoured -> {
                         val modifiedTo = value.toBoolean()
                         modification = { category.favoured = modifiedTo }
                         TodoCategoryModificationModel(null, category.favoured, category.modifiedTime)

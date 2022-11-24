@@ -10,6 +10,7 @@ import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
 import data.TodoItem
+import data.TodoItemFields
 import edu.uwaterloo.cs.todo.lib.ItemImportance
 import edu.uwaterloo.cs.todo.lib.TodoItemModificationModel
 import exceptions.IdNotFoundException
@@ -29,11 +30,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
     private val byUUID by option("--uuid", hidden = true).flag(default = false)
     private val itemId by argument(help = "ID of the todo item.")
     private val field by option(help = "Field to modify.").choice(
-        "name",
-        "description",
-        "favoured",
-        "importance",
-        "deadline",
+        TodoItemFields.values().dropWhile { it == TodoItemFields.Id }.associateBy { it.name },
         ignoreCase = true
     ).required()
     private val value by argument(
@@ -58,7 +55,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
 
             val modificationModel: TodoItemModificationModel =
                 when (field) {
-                    "name" -> {
+                    TodoItemFields.Name -> {
                         modification = { item.name = value }
                         TodoItemModificationModel(
                             name = value,
@@ -66,7 +63,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                         )
                     }
 
-                    "description" -> {
+                    TodoItemFields.Description -> {
                         modification = { item.description = value }
                         TodoItemModificationModel(
                             description = value,
@@ -74,7 +71,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                         )
                     }
 
-                    "favoured" -> {
+                    TodoItemFields.Favoured -> {
                         val modifiedTo = value.toBoolean()
                         modification = { item.favoured = modifiedTo }
                         TodoItemModificationModel(
@@ -83,7 +80,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                         )
                     }
 
-                    "importance" -> {
+                    TodoItemFields.Importance -> {
                         val modifiedTo = enumValueOf<ItemImportance>(value)
                         modification = { item.importance = modifiedTo }
                         TodoItemModificationModel(
@@ -92,7 +89,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
                         )
                     }
 
-                    "deadline" -> {
+                    TodoItemFields.Deadline -> {
                         val modifiedTo = if (value.lowercase() == deadlineRemover) null else LocalDate.parse(value)
                         modification = { item.deadline = modifiedTo }
                         TodoItemModificationModel(

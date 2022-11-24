@@ -20,7 +20,8 @@ class CloudService(private val client: HttpClient, url: String) {
     companion object {
         private fun createResponse(status: HttpStatusCode, httpResponseBody: String): ServiceResult {
             val isSuccess = status.isSuccess()
-            val errorMessage: String? = if (isSuccess) null else if (httpResponseBody.isEmpty()) status.description else httpResponseBody
+            val errorMessage: String? =
+                if (isSuccess) null else if (httpResponseBody.isEmpty()) status.description else httpResponseBody
 
             return ServiceResult(isSuccess, errorMessage)
         }

@@ -24,7 +24,7 @@ fun createCloudService(config: CloudServiceConfig): CloudService? {
             HttpClient(CIO) { install(ContentNegotiation) { json() } }
         } else {
             HttpClient(CIO) {
-                install(ContentNegotiation) { json( Json { explicitNulls = false }) }
+                install(ContentNegotiation) { json(Json { explicitNulls = false }) }
                 install(Auth) {
                     digest {
                         realm = edu.uwaterloo.cs.todo.lib.realm
