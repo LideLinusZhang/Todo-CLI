@@ -47,7 +47,7 @@ class ModifyItem(private val dataFactory: DataFactory, private val cloudService:
             val item = getItemById(byUUID, itemId)
 
             if (item === null)
-                throw IdNotFoundException(itemId.toInt(), typeOf<TodoItem>())
+                throw IdNotFoundException(itemId, typeOf<TodoItem>())
 
             item.modifiedTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 

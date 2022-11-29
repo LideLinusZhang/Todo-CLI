@@ -95,7 +95,7 @@ class ListItems(private val dataFactory: DataFactory) :
             val category = getCategoryById(byUUID, categoryId)
 
             if (category === null)
-                throw IdNotFoundException(categoryId.toInt(), typeOf<TodoCategory>())
+                throw IdNotFoundException(categoryId, typeOf<TodoCategory>())
             val items = when (sortedBy) {
                 TodoItemFields.Id -> category.items.notForUpdate().orderBy(TodoItems.id to order)
                 TodoItemFields.Name -> category.items.notForUpdate().orderBy(TodoItems.name to order)

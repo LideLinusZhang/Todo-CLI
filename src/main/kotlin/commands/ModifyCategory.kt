@@ -35,7 +35,7 @@ class ModifyCategory(private val dataFactory: DataFactory, private val cloudServ
             val category = getCategoryById(byUUID, categoryId)
 
             if (category === null)
-                throw IdNotFoundException(categoryId.toInt(), typeOf<TodoCategory>())
+                throw IdNotFoundException(categoryId, typeOf<TodoCategory>())
 
             category.modifiedTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             val modification: () -> Unit
