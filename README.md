@@ -12,7 +12,7 @@ list-items       List all todo items under a category.
 ## Detailed Explanations
 ### Add Category
 ```
-Usage: cli add-category [OPTIONS] CATEGORYNAME
+Usage: todo-cli add-category [OPTIONS] CATEGORYNAME
 
   Add a todo category.
 
@@ -25,22 +25,32 @@ Arguments:
 
 ### Add Item
 ```
-Usage: cli add-item [OPTIONS] CATEGORYIDENTIFIER name [description]
+Usage: todo-cli add-item [OPTIONS] CATEGORYIDENTIFIER name [description]
 
   Add a todo item to a pre-existing category.
 
 Options:
   --importance [CRITICAL|VERY_HIGH|HIGH|NORMAL|BELOW_NORMAL|LOW]
-  --deadline VALUE
+  --deadline YYYY-MM-DD            Deadline of the item, in the format of
+                                   YYYY-MM-DD.
   --search-category-by [id|name]   Type of identifiers used to determine which
                                    category to add to
+  --favoured                       If entered, the added item will be set to
+                                   be favoured.
+
+Arguments:
+  CATEGORYIDENTIFIER  Value of the identifier used to determine which category
+                      to add to
+  name
+  description
+
 
 
 ```
 
 ### Delete Category
 ```
-Usage: cli delete-category [OPTIONS] CATEGORYID
+Usage: todo-cli delete-category [OPTIONS] CATEGORYID
 
   Delete a todo category and all items under it.
 
@@ -51,7 +61,8 @@ Arguments:
 
 ### Delete Item
 ```
-Usage: cli delete-item [OPTIONS] ITEMID
+Usage: todo-cli delete-item [OPTIONS] ITEMID
+
 
   Delete a todo item.
 
@@ -62,40 +73,65 @@ Arguments:
 
 ### List Categories
 ```
-Usage: cli list-categories [OPTIONS]
+Usage: todo-cli list-categories [OPTIONS]
 
   Display todo categories.
+
+Options:
+  --sorted-by [Id|Name|Favoured]
+  --descending
 ```
 ### List Items
 ```
-Usage: cli list-items [OPTIONS] CATEGORYID
+Usage: todo-cli list-items [OPTIONS] CATEGORYID
 
   List all todo items under a category.
+
+Options:
+  --sorted-by [Id|Name|Description|Favoured|Deadline|Importance]
+  --descending
+
+Arguments:
+  CATEGORYID  ID of the todo category.
+
 ```
 
 ### Modify Category
 ```
-Usage: cli modify-category [OPTIONS] CATEGORYID VALUE
+Usage: todo-cli modify-category [OPTIONS] CATEGORYID VALUE
 
   Modify a todo category.
 
 Options:
-  --field [name|favoured]
+  --field [Name|Favoured]
 
 Arguments:
-  CATEGORYID  Unique ID of the todo category.
+  CATEGORYID  ID of the todo category.
   VALUE
 ```
 ### Modify Item
 ```
-Usage: cli modify-item [OPTIONS] ITEMID VALUE
+Usage: todo-cli modify-item [OPTIONS] ITEMID VALUE
 
   Modify a todo item.
 
 Options:
-  --field [name|description|importance|deadline]
+  --field [Name|Description|Favoured|Deadline|Importance]
+                                   Field to modify.
 
 Arguments:
-  ITEMID  Unique ID of the todo item.
-  VALUE   To remove deadline, enter "none".
+  ITEMID  ID of the todo item.
+  VALUE   Value that the field will be modified to be.
+          For favoured, it should be either true or false.
+          For importance, it should be in [CRITICAL, VERY_HIGH, HIGH, NORMAL,
+          BELOW_NORMAL, LOW].
+          For deadline, the value should be in the format of YYYY-MM-DD. To
+          remove deadline, enter "none".
+```
+
+### Synchronize From Server
+```
+Usage: todo-cli sync-from-server [OPTIONS]
+
+  Synchronize all categories and items from the server to local.
 ```

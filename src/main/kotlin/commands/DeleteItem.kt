@@ -25,7 +25,7 @@ class DeleteItem(private val dataFactory: DataFactory, private val cloudService:
             val item = getItemById(byUUID, itemId)
 
             if (item === null)
-                throw IdNotFoundException(itemId.toInt(), typeOf<TodoItem>())
+                throw IdNotFoundException(itemId, typeOf<TodoItem>())
 
             val response = runBlocking { cloudService?.deleteItem(item.uniqueId) }
             if (response !== null && !response.successful)

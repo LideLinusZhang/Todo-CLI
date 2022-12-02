@@ -7,12 +7,11 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.mordant.terminal.Terminal
 import data.DataFactory
-import data.TodoCategories
 import data.TodoCategory
 import exceptions.IdNotFoundException
+import getCategoryById
 import kotlinx.coroutines.runBlocking
 import sync.CloudService
-import java.util.*
 import kotlin.reflect.typeOf
 
 class DeleteCategory(private val dataFactory: DataFactory, private val cloudService: CloudService?) :
@@ -23,12 +22,10 @@ class DeleteCategory(private val dataFactory: DataFactory, private val cloudServ
 
     override fun run() {
         dataFactory.transaction {
-            val category = if (byUUID)
-                TodoCategory.find { TodoCategories.uniqueId eq UUID.fromString(categoryId) }.firstOrNull()
-            else TodoCategory.findById(categoryId.toInt())
+            val category = getCategoryById(byUUID, categoryId)
 
             if (category === null)
-                throw IdNotFoundException(categoryId.toInt(), typeOf<TodoCategory>())
+                throw IdNotFoundException(categoryId, typeOf<TodoCategory>())
 
             val response = runBlocking { cloudService?.deleteCategory(category.uniqueId) }
             if (response !== null && !response.successful) {
