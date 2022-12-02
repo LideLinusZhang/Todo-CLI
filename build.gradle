@@ -1,6 +1,7 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.7.20'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.21'
     id 'application'
+    id 'org.graalvm.buildtools.native' version '0.9.18'
 }
 
 group = 'edu.uwaterloo.cs'
@@ -19,6 +20,7 @@ repositories {
             header(HttpHeaderAuthentication)
         }
     }
+    gradlePluginPortal()
 }
 
 dependencies {
@@ -34,8 +36,8 @@ dependencies {
     implementation "io.ktor:ktor-client-content-negotiation:$ktor_version"
     implementation "io.ktor:ktor-client-auth:$ktor_version"
     implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
-    implementation "org.xerial:sqlite-jdbc:3.39.3.0"
-    implementation "org.slf4j:slf4j-nop:2.0.3"
+    implementation 'org.xerial:sqlite-jdbc:3.39.4.1'
+    implementation 'org.slf4j:slf4j-nop:2.0.5'
     implementation "com.zaxxer:HikariCP:5.0.1"
 
     testImplementation "io.ktor:ktor-client-mock:$ktor_version"
@@ -57,4 +59,12 @@ compileTestKotlin {
 
 application {
     mainClassName = 'MainKt'
+}
+
+graalvmNative  {
+    binaries {
+        main {
+            buildArgs.add('--gc=epsilon')
+        }
+    }
 }
