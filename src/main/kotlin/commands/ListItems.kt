@@ -86,7 +86,7 @@ class ListItems(private val dataFactory: DataFactory) :
             column(2) { width = ColumnWidth.Expand(0.7) }
             column(3) { width = ColumnWidth.Fixed(7); align = TextAlign.CENTER }
             column(4) { width = ColumnWidth.Fixed(12); align = TextAlign.CENTER }
-            column(5) { width = ColumnWidth.Fixed(10); align = TextAlign.CENTER }
+            column(5) { width = ColumnWidth.Fixed(12); align = TextAlign.CENTER }
         })
     }
 

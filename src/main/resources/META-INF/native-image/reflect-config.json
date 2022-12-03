@@ -27,6 +27,9 @@
     "allDeclaredConstructors": true
   },
   {
+    "name":"kotlin.jvm.internal.DefaultConstructorMarker"
+  },
+  {
     "condition": {
       "typeReachable": "com.zaxxer.hikari.util.ConcurrentBag"
     },
@@ -516,5 +519,171 @@
   {
     "name":"edu.uwaterloo.cs.todo.lib.CloudServiceConfig$Companion",
     "methods":[{"name":"serializer","parameterTypes":[] }]
+  },
+  {
+    "name":"edu.uwaterloo.cs.todo.lib.TodoCategoryModel",
+    "fields":[{"name":"Companion"}]
+  },
+  {
+    "name":"edu.uwaterloo.cs.todo.lib.TodoCategoryModel$Companion",
+    "methods":[{"name":"serializer","parameterTypes":[] }]
+  },
+  {
+    "name":"edu.uwaterloo.cs.todo.lib.TodoItemModel",
+    "fields":[{"name":"Companion"}]
+  },
+  {
+    "name":"edu.uwaterloo.cs.todo.lib.TodoItemModel$Companion",
+    "methods":[{"name":"serializer","parameterTypes":[] }]
+  },
+  {
+    "name":"edu.uwaterloo.cs.todo.lib.TodoCategoryModificationModel",
+    "fields":[{"name":"Companion"}]
+  },
+  {
+    "name":"edu.uwaterloo.cs.todo.lib.TodoCategoryModificationModel$Companion",
+    "methods":[{"name":"serializer","parameterTypes":[] }]
+  },
+  {
+    "name":"edu.uwaterloo.cs.todo.lib.TodoItemModificationModel",
+    "fields":[{"name":"Companion"}]
+  },
+  {
+    "name":"edu.uwaterloo.cs.todo.lib.TodoItemModificationModel$Companion",
+    "methods":[{"name":"serializer","parameterTypes":[] }]
+  },
+  {
+    "name":"edu.uwaterloo.cs.todo.lib.UserModel",
+    "fields":[{"name":"Companion"}]
+  },
+  {
+    "name":"edu.uwaterloo.cs.todo.lib.UserModel$Companion",
+    "methods":[{"name":"serializer","parameterTypes":[] }]
+  },
+  {
+    "name":"edu.uwaterloo.cs.todo.lib.UserCredential",
+    "fields":[{"name":"Companion"}]
+  },
+  {
+    "name":"edu.uwaterloo.cs.todo.lib.UserCredential$Companion",
+    "methods":[{"name":"serializer","parameterTypes":[] }]
+  },
+  {
+    "name":"java.lang.ClassValue"
+  },
+  {
+    "name":"java.lang.Thread",
+    "methods":[{"name":"isVirtual","parameterTypes":[] }]
+  },
+  {
+    "name":"java.lang.management.ThreadInfo",
+    "fields":[{"name":"virtual"}]
+  },
+  {
+    "name":"java.security.SecureRandomParameters"
+  },
+  {
+    "name":"kotlin.Metadata",
+    "queryAllDeclaredMethods":true,
+    "methods":[
+      {"name":"bv","parameterTypes":[] },
+      {"name":"d1","parameterTypes":[] },
+      {"name":"d2","parameterTypes":[] },
+      {"name":"k","parameterTypes":[] },
+      {"name":"mv","parameterTypes":[] },
+      {"name":"pn","parameterTypes":[] },
+      {"name":"xi","parameterTypes":[] },
+      {"name":"xs","parameterTypes":[] }
+    ]
+  },
+  {
+    "name":"sun.security.provider.DRBG",
+    "methods":[{"name":"<init>","parameterTypes":["java.security.SecureRandomParameters"] }]
+  },
+  {
+    "name":"sun.security.provider.SHA",
+    "methods":[{"name":"<init>","parameterTypes":[] }]
+  },
+  {
+    "name":"sun.security.provider.SHA2$SHA256",
+    "methods":[{"name":"<init>","parameterTypes":[] }]
+  },
+  {
+    "name":"sun.security.provider.SecureRandom",
+    "methods":[{"name":"<init>","parameterTypes":[] }]
+  },
+  {
+    "name":"io.ktor.utils.io.ClosedWriteChannelException",
+    "allDeclaredFields":true,
+    "queryAllPublicConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
+  },
+  {
+    "name":"kotlin.collections.List"
+  },
+  {
+    "name":"io.ktor.utils.io.ClosedWriteChannelException",
+    "allDeclaredFields":true,
+    "queryAllPublicConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
+  },
+  {
+    "name":"java.lang.ClassValue"
+  },
+  {
+    "name":"java.lang.Exception",
+    "allDeclaredFields":true
+  },
+  {
+    "name":"java.lang.IllegalStateException",
+    "allDeclaredFields":true
+  },
+  {
+    "name":"java.lang.Object",
+    "allDeclaredFields":true
+  },
+  {
+    "name":"java.lang.RuntimeException",
+    "allDeclaredFields":true
+  },
+  {
+    "name":"java.lang.Thread",
+    "methods":[{"name":"isVirtual","parameterTypes":[] }]
+  },
+  {
+    "name":"java.lang.Throwable",
+    "allDeclaredFields":true
+  },
+  {
+    "name":"java.lang.management.ThreadInfo",
+    "fields":[{"name":"virtual"}]
+  },
+  {
+    "name":"java.net.StandardSocketOptions"
+  },
+  {
+    "name":"java.security.SecureRandomParameters"
+  },
+  {
+    "name":"java.util.List"
+  },
+  {
+    "name":"java.util.concurrent.CancellationException",
+    "allDeclaredFields":true
+  },
+  {
+    "name":"kotlin.Int"
+  },
+  {
+    "name":"org.jetbrains.exposed.dao.id.EntityID"
+  },
+  {
+    "name": "io.ktor.utils.io.pool.DefaultPool",
+    "fields": [
+      {
+        "name": "top",
+        "allowUnsafeAccess": true
+      }
+    ]
   }
 ]
