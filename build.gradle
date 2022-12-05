@@ -65,6 +65,12 @@ graalvmNative  {
     binaries {
         main {
             buildArgs.add('--gc=epsilon')
+
+            buildArgs.add("--initialize-at-build-time=io.ktor.client.engine.cio,kotlin.coroutines")
+
+            buildArgs.add("-H:+InstallExitHandlers")
+            buildArgs.add("-H:+ReportUnsupportedElementsAtRuntime")
+            buildArgs.add("-H:+ReportExceptionStackTraces")
         }
     }
 }
