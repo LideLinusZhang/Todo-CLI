@@ -1,6 +1,7 @@
 # Todo CLI
 ## Available Commands
 ```
+add-category     Add a todo category.
 add-item         Add a todo item to a pre-existing category.
 delete-category  Delete a todo category and all items under it.
 delete-item      Delete a todo item.
@@ -8,6 +9,7 @@ modify-item      Modify a todo item.
 modify-category  Modify a todo category.
 list-categories  Display todo categories.
 list-items       List all todo items under a category.
+sync-from-server Synchronize all categories and items from the server to local.
 ```
 ## Detailed Explanations
 ### Add Category
