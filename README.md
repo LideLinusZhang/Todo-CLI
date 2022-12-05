@@ -1,15 +1,17 @@
 # Todo CLI
 ## Available Commands
 ```
-add-category     Add a todo category.
-add-item         Add a todo item to a pre-existing category.
-delete-category  Delete a todo category and all items under it.
-delete-item      Delete a todo item.
-modify-item      Modify a todo item.
-modify-category  Modify a todo category.
-list-categories  Display todo categories.
-list-items       List all todo items under a category.
-sync-from-server Synchronize all categories and items from the server to local.
+add-category        Add a todo category.
+add-item            Add a todo item to a pre-existing category.
+delete-category     Delete a todo category and all items under it.
+delete-item         Delete a todo item.
+modify-item         Modify a todo item.
+modify-category     Modify a todo category.
+list-categories     Display todo categories.
+list-items          List all todo items under a category.
+sync-from-server    Synchronize all categories and items from the server to local.
+sign-up             Create an account for synchronization.
+generate-completion Generate a tab-complete script for the given shell
 ```
 ## Detailed Explanations
 ### Add Category
@@ -136,4 +138,17 @@ Arguments:
 Usage: todo-cli sync-from-server [OPTIONS]
 
   Synchronize all categories and items from the server to local.
+```
+### Sign Up
+```
+Usage: todo-cli sign-up [OPTIONS]
+
+  Create an account for synchronization.
+```
+
+### Generate Completion
+```
+Usage: todo-cli generate-completion [OPTIONS] SHELL
+
+  Generate a tab-complete script for the given shell
 ```
