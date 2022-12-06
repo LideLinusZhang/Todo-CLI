@@ -619,9 +619,6 @@
     "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
   },
   {
-    "name":"kotlin.collections.List"
-  },
-  {
     "name":"io.ktor.utils.io.ClosedWriteChannelException",
     "allDeclaredFields":true,
     "queryAllPublicConstructors":true,
@@ -670,9 +667,6 @@
   {
     "name":"java.util.concurrent.CancellationException",
     "allDeclaredFields":true
-  },
-  {
-    "name":"kotlin.Int"
   },
   {
     "name":"org.jetbrains.exposed.dao.id.EntityID"
